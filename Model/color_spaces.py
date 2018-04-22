@@ -20,7 +20,7 @@ def _generate_lab_background(l_component=50):
 
 def _convert_lab_to_rgb():
     rgb = color.lab2rgb(LAB_BACKGROUND)
-    rgb = rgb * 255
+    rgb *= 255  # lab2rgb returns floats in range [0; 1] but we need uint8 numbers in [0; 255] for PyQt QImage
     rgb = np.require(rgb, np.uint8, 'C')
     return rgb
 

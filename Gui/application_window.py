@@ -4,8 +4,6 @@ from PyQt5.QtCore import Qt, QRect
 
 import sys
 from Model.grid import Grid
-
-import numpy as np
 from Model.color_spaces import RGB_BACKGROUND
 from Model.to_qimage import to_qimage
 
@@ -19,10 +17,9 @@ class ApplicationWindow(QMainWindow):
     def paintEvent(self, e):
         painter = QPainter(self)
 
-        background = RGB_BACKGROUND  # np.require(RGB_BACKGROUND, np.uint8, 'C')
+        background = RGB_BACKGROUND
         qimage = to_qimage(background)
         painter.drawImage(QRect(0, 0, 500, 500), qimage)
-
 
         painter.setPen(QPen(Qt.black, 10, Qt.SolidLine))
 
