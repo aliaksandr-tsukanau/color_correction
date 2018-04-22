@@ -20,7 +20,7 @@ class Grid:
     def __getitem__(self, item):
         return next(islice(self.nodes(), item))
 
+
     def __setitem__(self, key, value):
-        elem = next(islice(self.nodes(), key))
-        elem = value
+        self.branches[key // len(self.branches)].nodes[key % len(self.branches)] = value
 

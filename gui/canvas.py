@@ -43,6 +43,7 @@ class DragAndDropCanvas(QWidget):
     def mousePressEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is None:
             point = self._get_point(evt)
+
             # dist will hold the square distance from the click to the points
             dist = self._nodes - point
             dist = dist[:, 0]**2 + dist[:, 1]**2
@@ -60,6 +61,14 @@ class DragAndDropCanvas(QWidget):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
             point = self._get_point(evt)
             self._nodes[self.draggin_idx] = point
+
+            if self.draggin_idx is not None:
+                node_to_update = grid[int(self.draggin_idx)]
+                # int() call is required since islice inside Grid.__getattr__()
+                # does not accept numpy index
+            node_to_update.x = point[0]
+            node_to_update.y = point[1]
+
             self.draggin_idx = None
             self.update()
 
