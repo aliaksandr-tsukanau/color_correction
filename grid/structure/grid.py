@@ -18,8 +18,7 @@ class Grid:
                 yield node
 
     def __getitem__(self, item):
-        return next(islice(self.nodes(), item))
-
+        return self.branches[item // len(self.branches)].nodes[item % len(self.branches)]
 
     def __setitem__(self, key, value):
         self.branches[key // len(self.branches)].nodes[key % len(self.branches)] = value

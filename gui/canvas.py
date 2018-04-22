@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QWidget
 
 from grid.grid_instance import grid
 
+import pprint
+
 
 # TODO: not allow nodes go out of canvas
 # TODO: fix center behaviour
@@ -68,6 +70,8 @@ class DragAndDropCanvas(QWidget):
                 # does not accept numpy index
             node_to_update.x = point[0]
             node_to_update.y = point[1]
+
+            # pprint.pprint([branch.nodes for branch in grid.branches])
 
             self.draggin_idx = None
             self.update()
