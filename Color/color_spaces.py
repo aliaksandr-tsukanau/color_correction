@@ -1,10 +1,12 @@
 import numpy as np
-import pprint
 from skimage import color
 import matplotlib.pyplot as plt
 
 
 def _generate_lab_background(l_component=50):
+    """generates square image as np array of shape (256, 256, 3)\
+    in CIELAB color space where a and b vary from -127 to 128 along orthogonal directions of image\
+    and L stays the same along the image and is set via l_component parameter"""
     ab = np.mgrid[-127:129, -127:129]
     # 2-dim array of a and b CIELAB components
     # a and b take values in range [-127; 128] sequentially
@@ -14,7 +16,8 @@ def _generate_lab_background(l_component=50):
     lab[0, :, :] = l  # copying l component to result
     lab[1, :, :] = ab[0, :, :]  # copying a component to result
     lab[2, :, :] = ab[1, :, :]  # copying b component to result
-    lab = np.moveaxis(lab, 0, 2)  # change axis order so that shape is (3, ... , ...) needed for skimage
+    lab = np.moveaxis(lab, 0, 2)  # change axes order so that shape is (... , ... , 3) needed for skimage
+    print(lab.shape)
     return lab
 
 
@@ -29,6 +32,7 @@ LAB_BACKGROUND = _generate_lab_background()
 RGB_BACKGROUND = _convert_lab_to_rgb()
 
 if __name__ == '__main__':
+    # quick test using matplotlib
     plt.imshow(RGB_BACKGROUND)
     plt.show()
 

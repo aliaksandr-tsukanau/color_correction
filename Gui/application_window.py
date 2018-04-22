@@ -13,22 +13,16 @@ from Image.to_qimage import to_qimage
 class ApplicationWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedWidth(500)
-        self.setFixedHeight(500)
+        self._palette_size = grid.radius * 2
+        self.setFixedWidth(self._palette_size)
+        self.setFixedHeight(self._palette_size)
 
     def paintEvent(self, e):
         painter = QPainter(self)
 
         background = RGB_BACKGROUND
         qimage = to_qimage(background)
-        painter.drawImage(QRect(0, 0, 500, 500), qimage)
-
-        # painter.setPen(QPen(Qt.black, 10, Qt.SolidLine))
-        #
-        # g = Grid(10, 250)
-        # for branch in g.branches:
-        #     for node in branch.nodes:
-        #         painter.drawPoint(node.x + 250, node.y + 250)
+        painter.drawImage(QRect(0, 0, self._palette_size, self._palette_size), qimage)
 
 
 def start():

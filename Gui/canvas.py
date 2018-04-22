@@ -3,10 +3,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QWidget
 
-import Grid  # for annotation in method signature only
+import Grid  # only for annotation in method signature
 
 
 # TODO: not allow nodes go out of canvas
+# TODO: fix center behaviour
+
 class DragAndDropCanvas(QWidget):
     """Custom canvas (QPainter-like) widget that supports dragging of nodes by mouse"""
 
@@ -20,12 +22,8 @@ class DragAndDropCanvas(QWidget):
         self.setGeometry(0, 0, 500, 500)
 
         self._grid = grid
-        branches = grid.branches
-        nodes = []
-        for branch in branches:
-            nodes += branch.nodes
 
-        self._nodes = np.array([[node.x + 250, node.y + 250] for node in nodes])
+        self._nodes = np.array([node.coords_for_canvas for node in grid.nodes()])
 
     def paintEvent(self, e):
         qp = QPainter()
