@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QWidget
 
-import Grid  # only for annotation in method signature
+from grid.grid_instance import grid
 
 
 # TODO: not allow nodes go out of canvas
@@ -12,7 +12,7 @@ import Grid  # only for annotation in method signature
 class DragAndDropCanvas(QWidget):
     """Custom canvas (QPainter-like) widget that supports dragging of nodes by mouse"""
 
-    def __init__(self, parent, grid: Grid.grid_structure.Grid, delta=30):
+    def __init__(self, parent=None, delta=30):
         """delta - minimum distance at which node reacts to mouse dragging\
         (actually square distance).
         Affects grid sensitivity"""

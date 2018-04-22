@@ -29,7 +29,7 @@ def _convert_lab_to_rgb():
 
 
 LAB_BACKGROUND = _generate_lab_background()
-RGB_BACKGROUND = _convert_lab_to_rgb()
+RGB_BACKGROUND = _convert_lab_to_rgb()  # this picture is the one used for palette
 
 if __name__ == '__main__':
     # quick test using matplotlib

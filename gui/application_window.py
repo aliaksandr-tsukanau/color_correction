@@ -4,10 +4,10 @@ from PyQt5.QtCore import QRect
 from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from Color.color_spaces import RGB_BACKGROUND
-from Grid.grid_instance import grid
-from Gui.canvas import DragAndDropCanvas
-from Image.to_qimage import to_qimage
+from color.color_spaces import RGB_BACKGROUND
+from grid.grid_instance import grid
+from gui.canvas import DragAndDropCanvas
+from image.to_qimage import to_qimage
 
 
 class ApplicationWindow(QMainWindow):
@@ -28,7 +28,7 @@ class ApplicationWindow(QMainWindow):
 def start():
     application = QApplication(sys.argv)
     main_window = ApplicationWindow()
-    main_window.setCentralWidget(DragAndDropCanvas(None, grid))
+    main_window.setCentralWidget(DragAndDropCanvas())
     main_window.show()
     sys.exit(application.exec_())
 

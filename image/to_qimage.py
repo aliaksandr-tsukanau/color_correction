@@ -15,4 +15,4 @@ def to_qimage(im, copy=False):
         qim = QImage(im.data, im.shape[1], im.shape[0], im.strides[0], QImage.Format_RGB888)
         return qim.copy() if copy else qim
 
-    raise NotImplementedError
+    raise ValueError('Input array must be an np array of shape (..., ..., 3) with elements of type uint8.')
