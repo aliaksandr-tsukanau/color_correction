@@ -1,5 +1,4 @@
 from math import cos, sin, radians
-# import turtle
 
 
 class Node:
@@ -44,18 +43,3 @@ class Grid:
         # branches_number is also a number of node in a branch
         self.branches = [Branch(angle, nodes_number=branches_number, radius=radius)
                          for angle in range(0, 360, int(360 / branches_number))]
-
-
-# def draw(grid: 'Grid'):
-#     for branch in grid.branches:
-#         for node in branch.nodes:
-#             turtle.goto(node.x, node.y)
-#
-#
-# def print_nodes(grid: 'Grid'):
-#     for branch in grid.branches:
-#         for node in branch.nodes:
-#             print(repr(node))
-
-
-# print_nodes(Grid(branches_number=10, radius=200))
