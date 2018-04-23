@@ -1,10 +1,11 @@
 import numpy as np
-from skimage import data
+from skimage import data, io
 import matplotlib.pyplot as plt
 
-INITIAL_IMAGE = data.chelsea()
+#INITIAL_IMAGE = io.imread('/home/sasha/Desktop/green_bubbles-wide.jpg')
+INITIAL_IMAGE = data.hubble_deep_field()
 # plt.imshow(INITIAL_IMAGE)
-# plt.show()
+# plt.show()horse()
 
 PROCESSED_IMAGE = []  # np array 3 dim
 

@@ -1,10 +1,11 @@
 import sys
 
 from PyQt5.QtCore import QRect, Qt, QPoint
-from PyQt5.QtGui import QPainter
+from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from color.color_spaces import RGB_BACKGROUND
+from color.correction import AB_UNIQUE_FOR_PYQT
+from color.palette import RGB_BACKGROUND
 from grid.grid_instance import grid
 from gui.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
@@ -29,6 +30,14 @@ class ApplicationWindow(QMainWindow):
         image = to_qimage(INITIAL_IMAGE)
         scaled_img = image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
+
+        self._draw_ab_hist(painter)
+
+    def _draw_ab_hist(self, painter: QPainter):
+        painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
+        for ab in AB_UNIQUE_FOR_PYQT:
+            painter.drawPoint(ab[1], ab[0])
+            # 1, then 0 is no mistake
 
 
 def start():
