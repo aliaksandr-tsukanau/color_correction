@@ -25,29 +25,52 @@ class DragAndDropCanvas(QWidget):
 
         self._pen_pinned = QPen(Qt.black, 10, Qt.SolidLine)
         self._pen_notpinned = QPen(Qt.black, 5, Qt.SolidLine)
-        self._pen_edge = QPen(Qt.black, 2, Qt.SolidLine)
+        self._pen_edge = QPen(Qt.black, 1, Qt.SolidLine)
 
-        self._grid = grid
+        self._update_nodes_array()
+
+    def _update_nodes_array(self):
+        """writes numpy array of all grid's nodes to instance field self._nodes"""
         self._nodes = np.array([node.coords_for_canvas for node in grid.nodes()])
+        # nodes are stored as a numpy copy to simplify and fasten calculations of distances
 
     def paintEvent(self, e):
         painter = QPainter()
         painter.begin(self)
+        self._update_nodes_array()  # copy changes of branch update inside this class
         self.draw_points(painter)
+        self.draw_edges(painter)
         painter.end()
 
     def draw_points(self, painter: QPainter):
         for i, (x, y) in enumerate(self._nodes):
-            painter.setPen(self._pen_pinned if grid[i].is_pinned else self._pen_notpinned)
+            painter.setPen(
+                self._pen_pinned if grid[i].is_pinned else self._pen_notpinned)
             painter.drawPoint(x, y)
 
-    def _get_point(self, evt):
+    def draw_edges(self, painter: QPainter):
+        painter.setPen(self._pen_edge)
+
+        # radial edges
+        for branch in grid.branches:
+            for from_, to in zip(branch.nodes, branch.nodes[1:]):
+                painter.drawLine(*from_.coords_for_canvas, *to.coords_for_canvas)
+
+        # concentric edges
+        nodes_per_branch = len(grid.branches)
+        for i in range(nodes_per_branch):
+            for branch_from, branch_to in zip(grid.branches, grid.branches[1:] + [grid.branches[0]]):
+                painter.drawLine(
+                                *branch_from.nodes[i].coords_for_canvas,
+                                *branch_to.nodes[i].coords_for_canvas
+                                 )
+
+    def _get_mouse_position(self, evt):
         return np.array([evt.pos().x(), evt.pos().y()])
 
-    # get the click coordinates
     def mousePressEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is None:
-            point = self._get_point(evt)
+            point = self._get_mouse_position(evt)
 
             # dist will hold the square distance from the click to the points
             dist = self._nodes - point
@@ -58,22 +81,20 @@ class DragAndDropCanvas(QWidget):
 
     def mouseMoveEvent(self, evt):
         if self.draggin_idx is not None:
-            point = self._get_point(evt)
+            point = self._get_mouse_position(evt)
             self._nodes[self.draggin_idx] = point
             self.update()
 
     def mouseReleaseEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
-            point = self._get_point(evt)
+            point = self._get_mouse_position(evt)
             self._nodes[self.draggin_idx] = point
 
             if self.draggin_idx is not None:
                 node_to_update = grid[int(self.draggin_idx)]
                 # int() call is required since islice inside Grid.__getattr__()
                 # does not accept numpy index
-            node_to_update.x = point[0]
-            node_to_update.y = point[1]
-            node_to_update.is_pinned = True
+            node_to_update.update_branch(*point)
 
             # pprint.pprint([branch.nodes for branch in grid.branches])
 
