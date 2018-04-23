@@ -17,7 +17,6 @@ def _generate_lab_background(l_component=50):
     lab[1, :, :] = ab[0, :, :]  # copying a component to result
     lab[2, :, :] = ab[1, :, :]  # copying b component to result
     lab = np.moveaxis(lab, 0, 2)  # change axes order so that shape is (... , ... , 3) needed for skimage
-    print(lab.shape)
     return lab
 
 

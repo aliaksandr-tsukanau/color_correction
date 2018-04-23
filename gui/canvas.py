@@ -23,20 +23,23 @@ class DragAndDropCanvas(QWidget):
         self.draggin_idx = None
         self.setGeometry(0, 0, 500, 500)
 
-        self._grid = grid
+        self._pen_pinned = QPen(Qt.black, 10, Qt.SolidLine)
+        self._pen_notpinned = QPen(Qt.black, 5, Qt.SolidLine)
+        self._pen_edge = QPen(Qt.black, 2, Qt.SolidLine)
 
+        self._grid = grid
         self._nodes = np.array([node.coords_for_canvas for node in grid.nodes()])
 
     def paintEvent(self, e):
-        qp = QPainter()
-        qp.begin(self)
-        self.draw_points(qp)
-        qp.end()
+        painter = QPainter()
+        painter.begin(self)
+        self.draw_points(painter)
+        painter.end()
 
-    def draw_points(self, qp):
-        qp.setPen(QPen(Qt.black, 10, Qt.SolidLine))
-        for x, y in self._nodes:
-            qp.drawPoint(x, y)
+    def draw_points(self, painter: QPainter):
+        for i, (x, y) in enumerate(self._nodes):
+            painter.setPen(self._pen_pinned if grid[i].is_pinned else self._pen_notpinned)
+            painter.drawPoint(x, y)
 
     def _get_point(self, evt):
         return np.array([evt.pos().x(), evt.pos().y()])
@@ -70,6 +73,7 @@ class DragAndDropCanvas(QWidget):
                 # does not accept numpy index
             node_to_update.x = point[0]
             node_to_update.y = point[1]
+            node_to_update.is_pinned = True
 
             # pprint.pprint([branch.nodes for branch in grid.branches])
 
