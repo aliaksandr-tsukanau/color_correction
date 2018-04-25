@@ -31,9 +31,10 @@ class ApplicationWindow(QMainWindow):
         scaled_img = image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
 
-        self._draw_ab_hist(painter)
+        self._draw_present_colors(painter)
 
-    def _draw_ab_hist(self, painter: QPainter):
+    def _draw_present_colors(self, painter: QPainter):
+        """Mark colors present in initial picture as white dots"""
         painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
         for ab in AB_UNIQUE_FOR_PYQT:
             painter.drawPoint(ab[1], ab[0])

@@ -72,14 +72,20 @@ class DragAndDropCanvas(QWidget):
         if evt.button() == Qt.LeftButton and self.draggin_idx is None:
             point = self._get_mouse_position(evt)
 
-            # dist will hold the square distance from the click to the points
-            dist = self._nodes - point
-            dist = dist[:, 0]**2 + dist[:, 1]**2
-            dist[dist > self._delta] = np.inf  # obviate the distances above DELTA
-            if dist.min() < np.inf:
-                self.draggin_idx = dist.argmin()
+            def _get_clicked_node_idx():
+                # dist will hold the square distance from the click to the points
+                dist = self._nodes - point
+                dist = dist[:, 0] ** 2 + dist[:, 1] ** 2
+                dist[dist > self._delta] = np.inf  # obviate the distances above DELTA
+                if dist.min() < np.inf:
+                    return dist.argmin()
+                else:
+                    return None
+            self.draggin_idx = _get_clicked_node_idx()
 
-    def _update_gui_grid(self, evt):
+
+
+    def _redraw_to_new_mouse_position(self, evt):
         point = self._get_mouse_position(evt)
         self._nodes[self.draggin_idx] = point
 
@@ -92,10 +98,10 @@ class DragAndDropCanvas(QWidget):
 
     def mouseMoveEvent(self, evt):
         if self.draggin_idx is not None:
-            self._update_gui_grid(evt)
+            self._redraw_to_new_mouse_position(evt)
 
     def mouseReleaseEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
-            self._update_gui_grid(evt)
+            self._redraw_to_new_mouse_position(evt)
             self.draggin_idx = None
 
