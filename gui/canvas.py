@@ -79,31 +79,23 @@ class DragAndDropCanvas(QWidget):
             if dist.min() < np.inf:
                 self.draggin_idx = dist.argmin()
 
+    def _update_gui_grid(self, evt):
+        point = self._get_mouse_position(evt)
+        self._nodes[self.draggin_idx] = point
+
+        node_to_update = grid[int(self.draggin_idx)]
+        # int() call is required since islice inside Grid.__getattr__()
+        # does not accept numpy index
+        node_to_update.update_branch(*point)
+
+        self.update()
+
     def mouseMoveEvent(self, evt):
         if self.draggin_idx is not None:
-            point = self._get_mouse_position(evt)
-            self._nodes[self.draggin_idx] = point
-
-            node_to_update = grid[int(self.draggin_idx)]
-            # int() call is required since islice inside Grid.__getattr__()
-            # does not accept numpy index
-            node_to_update.update_branch(*point)
-
-            self.update()
+            self._update_gui_grid(evt)
 
     def mouseReleaseEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
-            point = self._get_mouse_position(evt)
-            self._nodes[self.draggin_idx] = point
-
-            if self.draggin_idx is not None:
-                node_to_update = grid[int(self.draggin_idx)]
-                # int() call is required since islice inside Grid.__getattr__()
-                # does not accept numpy index
-                node_to_update.update_branch(*point)
-
-            # pprint.pprint([branch.nodes for branch in grid.branches])
-
+            self._update_gui_grid(evt)
             self.draggin_idx = None
-            self.update()
 
