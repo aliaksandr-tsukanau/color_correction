@@ -17,7 +17,7 @@ class ApplicationWindow(QMainWindow):
         super().__init__(parent)
         self._palette_size = grid.radius * 2
         self.setFixedWidth(self._palette_size +\
-                           INITIAL_IMAGE.shape[1]*self._palette_size/INITIAL_IMAGE.shape[0])
+                           INITIAL_IMAGE.shape[1] * self._palette_size / INITIAL_IMAGE.shape[0])
                            # to exactly fit the picture
         self.setFixedHeight(self._palette_size)
 
@@ -27,14 +27,14 @@ class ApplicationWindow(QMainWindow):
         background = to_qimage(RGB_BACKGROUND)
         painter.drawImage(QRect(0, 0, self._palette_size, self._palette_size), background)
 
-        image = to_qimage(INITIAL_IMAGE)
-        scaled_img = image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
+        initial_image = to_qimage(INITIAL_IMAGE)
+        scaled_img = initial_image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
 
         self._draw_present_colors(painter)
 
     def _draw_present_colors(self, painter: QPainter):
-        """Mark colors present in initial picture as white dots"""
+        """Mark colors present in initial picture as white dots on palette"""
         painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
         for ab in AB_UNIQUE_FOR_PYQT:
             painter.drawPoint(ab[1], ab[0])
