@@ -2,6 +2,7 @@ from image.image import INITIAL_IMAGE
 import numpy as np
 from skimage import color
 from grid.grid_instance import grid
+from math import atan2, degrees
 
 
 def get_unique_colors_lab(image):
@@ -29,7 +30,17 @@ LUT_AB = {'initial': AB_UNIQUE, 'corrected': AB_UNIQUE}
 # LUT_RGB = np.empty()
 
 
-def _ab_to_dh():
+def _ab_to_dh(ab):
+    """applies ab to dh transformation to just one (a, b) pair"""
+    # not divided into inner functions for computational efficiency
+
+    a, b = ab[1], ab[0]
+    theta = degrees(atan2(b, a))
+    branches_angles = np.ndarray([branch.angle for branch in grid.branches])
+    
+    # theta -> theta1, theta2
+    # avg(theta1, theta2) -> radial line equation at avg angle
+    # line through (a, b) perpendicular to radial
     pass
 
 
@@ -38,9 +49,7 @@ def generate_initial_dh(lut_ab_initial):
     # np.apply_along_axis()
 
 
-
-
-DH = {k: generate_initial_dh() for k in ['initial', 'corrected']}
+DH = {k: generate_initial_dh(LUT_AB['initial']) for k in ['initial', 'corrected']}
 
 
 def update_lut_ab(initial, grid):

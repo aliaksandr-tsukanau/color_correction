@@ -15,8 +15,8 @@ class Branch:
         for i in (0, -1):
             self.nodes[i].is_pinned = True
 
-        self._angle = angle
+        self.angle = angle
         self.radius = radius
 
     def __repr__(self):
-        return 'Branch(angle=%r, nodes_number=%d, radius=%r)' % (self._angle, len(self.nodes), self.radius)
+        return 'Branch(angle=%r, nodes_number=%d, radius=%r)' % (self.angle, len(self.nodes), self.radius)
