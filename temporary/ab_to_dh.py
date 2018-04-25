@@ -3,9 +3,8 @@ import matplotlib.pyplot as plt
 from math import degrees, atan2, radians, tan
 from grid.grid_instance import grid
 
-ab = np.array([[2, 10, -9, 6], [40, 4, 7, -3]])
-plt.scatter(*ab)
-plt.show()
+ab = np.array([[2, -6], [-40, 20]])
+
 
 
 def _ab_to_dh(ab):
@@ -24,9 +23,28 @@ def _ab_to_dh(ab):
     theta1, theta2 = branches_angles[i], branches_angles[(i + 1) % branches_angles.shape[0]]
     # angles of branches that hold the point (a0, b0) in between
 
-    radial_angle = (theta1 + theta2) / 2
-    radial_k = tan(radians(radial_angle))
-    return radial_k
+    bisector_angle = (theta1 + theta2) / 2
+    # angle of bisector between i-th and (i+1) branches
+
+    bisector_k = tan(radians(bisector_angle))
+    # coefficient of bisector line equation so that the equation is:
+    # b = bisector_k * a
+
+    norm_k = 1 / -bisector_k
+    norm_b = a0 / -bisector_k + b0
+    # computed using analytical geometry formula for norm to a given line (bisector) through a given point (a0, b0)
+
+    # Now we need to get intersections of norm with branches
+    # b and h can be easily computed then
+
+    line = [(a, norm_k*a) + norm_b for a in range(-20, 20)]
+    plt.plot([p[0] for p in line], [p[1] for p in line])
+
+    return norm_k, norm_b
 
 
 print(np.apply_along_axis(_ab_to_dh, 0, ab))
+
+plt.scatter(*ab)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.show()
