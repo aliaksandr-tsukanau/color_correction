@@ -3,9 +3,6 @@ import matplotlib.pyplot as plt
 from math import degrees, atan2, radians, tan
 from grid.grid_instance import grid
 
-ab = np.array([[2, -6], [-40, 20]])
-
-
 
 def _ab_to_dh(ab):
     """applies ab to dh transformation to just one (a, b) pair"""
@@ -30,18 +27,36 @@ def _ab_to_dh(ab):
     # coefficient of bisector line equation so that the equation is:
     # b = bisector_k * a
 
-    norm_k = 1 / -bisector_k
-    norm_b = a0 / -bisector_k + b0
-    # computed using analytical geometry formula for norm to a given line (bisector) through a given point (a0, b0)
+    def get_norm():
+        norm_k = 1 / -bisector_k
+        norm_b = a0 / bisector_k + b0
+        return norm_k, norm_b
+
+    norm_k, norm_b = get_norm()
+    # norm to bisector through a given point (a0, b0)
+
+    line = [(a, norm_k * a + norm_b) for a in range(-20, 20)]
+    plt.plot([p[0] for p in line], [p[1] for p in line])
 
     # Now we need to get intersections of norm with branches
-    # b and h can be easily computed then
+    def get_intersection(branch_angle):
+        k = tan(radians(branch_angle))
+        intersection_a = norm_b / (k - norm_k)
+        intersection_b = k * intersection_a
+        return intersection_a, intersection_b
 
-    line = [(a, norm_k*a) + norm_b for a in range(-20, 20)]
-    plt.plot([p[0] for p in line], [p[1] for p in line])
+    intersection1 = get_intersection(theta1)
+    plt.scatter(*intersection1)
+
+    intersection2 = get_intersection(theta2)
+    plt.scatter(*intersection2)
+
+    # b and h can be easily computed then
 
     return norm_k, norm_b
 
+
+ab = np.array([[-23], [17]])
 
 print(np.apply_along_axis(_ab_to_dh, 0, ab))
 

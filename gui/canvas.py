@@ -21,7 +21,7 @@ class DragAndDropCanvas(QWidget):
         super().__init__(parent)
         self._delta = delta
         self.draggin_idx = None
-        self.setGeometry(0, 0, 500, 500)
+        self.setGeometry(0, 0, grid.radius * 2, grid.radius * 2)
 
         self._pen_pinned = QPen(Qt.black, 10, Qt.SolidLine)
         self._pen_notpinned = QPen(Qt.black, 5, Qt.SolidLine)

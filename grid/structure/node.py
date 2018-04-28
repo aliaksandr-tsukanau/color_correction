@@ -25,7 +25,7 @@ class Node:
         return self.x + offset, self.y + offset
 
     def update_branch(self, new_x, new_y):
-        """updates nodes coordinates for entire branch stretching and squeezing regions between pinned nodes
+        """Updates nodes coordinates for entire branch stretching and squeezing regions between pinned nodes.
         new_x and new_y are coordinates in PyQt form (not zero-centered)"""
         self.is_pinned = True
 
@@ -37,20 +37,12 @@ class Node:
         def _recalculate_parent_branch(nodes: list):
             pinned_indices = [i for i, node in enumerate(nodes) if node.is_pinned]
             for prev, next_ in zip(pinned_indices, pinned_indices[1:]):
-                # prev and next_ are indices of pinned nodes which hold all j-th nodes below
+                # prev and next_ are indices of pinned nodes which hold all j-th nodes below in between
                 for j in range(prev + 1, next_):
-                    nodes[j].x =\
-                        nodes[prev].x +\
-                        (nodes[next_].x - nodes[prev].x) *\
-                        (j - prev)/(next_ - prev)
-                    nodes[j].y = \
-                        nodes[prev].y + \
-                        (nodes[next_].y - nodes[prev].y) * \
-                        (j - prev) / (next_ - prev)
+                    nodes[j].x = nodes[prev].x + (nodes[next_].x - nodes[prev].x) * (j - prev)/(next_ - prev)
+                    nodes[j].y = nodes[prev].y + (nodes[next_].y - nodes[prev].y) * (j - prev) / (next_ - prev)
 
         _recalculate_parent_branch(self._parent_branch.nodes)
-
-
 
     def __repr__(self):
         return 'Node(%r, %r, %s)' % (self.x, self.y, self.is_pinned)
