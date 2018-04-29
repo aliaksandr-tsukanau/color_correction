@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from math import degrees, atan2, radians, tan
+from math import degrees, atan2, radians, tan, sqrt
 from grid.grid_instance import grid
 
 
@@ -40,10 +40,11 @@ def _ab_to_dh(ab):
 
     # Now we need to get intersections of norm with branches
     def get_intersection(branch_angle):
+        """returns (a, b) coordinates of branch-norm intersection"""
         k = tan(radians(branch_angle))
         intersection_a = norm_b / (k - norm_k)
         intersection_b = k * intersection_a
-        return intersection_a, intersection_b
+        return np.array([intersection_a, intersection_b])
 
     intersection1 = get_intersection(theta1)
     plt.scatter(*intersection1)
@@ -53,10 +54,16 @@ def _ab_to_dh(ab):
 
     # b and h can be easily computed then
 
-    return norm_k, norm_b
+    def get_distance(point1: np.ndarray, point2: np.ndarray):
+        d = (point1 - point2) ** 2
+        return sqrt(d[0] + d[1])
+
+    h = get_distance(ab, intersection1)
+    d = get_distance(ab, np.zeros(2))
+    return d, h
 
 
-ab = np.array([[-23], [17]])
+ab = np.array([[3], [6]])
 
 print(np.apply_along_axis(_ab_to_dh, 0, ab))
 
