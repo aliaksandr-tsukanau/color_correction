@@ -4,8 +4,8 @@ from math import cos, sin, radians
 class Node:
     """For a node in GUI grid"""
     def __init__(self, x, y, parent_branch: 'grid.structure.branch.Branch'):
-        self.x = x
-        self.y = y
+        self.x = self.initial_x = x
+        self.y = self.initial_y = y
         self._parent_branch = parent_branch  # is needed for conversion in coords_for_canvas
         self.is_pinned = False
 
@@ -43,6 +43,11 @@ class Node:
                     nodes[j].y = nodes[prev].y + (nodes[next_].y - nodes[prev].y) * (j - prev) / (next_ - prev)
 
         _recalculate_parent_branch(self._parent_branch.nodes)
+
+    @property
+    def displacement(self):
+        """returns vector from initial to current coordinates as a tuple"""
+        return self.x - self.initial_x, self.y - self.initial_y
 
     def __repr__(self):
         return 'Node(%r, %r, %s)' % (self.x, self.y, self.is_pinned)
