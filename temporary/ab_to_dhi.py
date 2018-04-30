@@ -5,10 +5,12 @@ from grid.grid_instance import grid
 
 
 def _ab_to_dhi(ab):
-    """applies ab to dh transformation to just one (a, b) pair"""
+    """applies ab to dhi transformation to just one (a, b) pair"""
     # not divided into inner functions for computational efficiency
 
     a0, b0 = ab  # cartesian coordinates of given point in AB space
+
+    # handle situation when a or b is 0
     if a0 == 0:
         d = abs(b0)
         i = 0 if d >= 0 else len(grid.branches) / 2
