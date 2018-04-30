@@ -64,9 +64,9 @@ def _ab_to_dhi(ab):
     return d, h, i
 
 
-ab = np.array([[3, -18], [6, 8]])
+ab = np.array([[3, -18], [6, 8], [3, -4]])
 
-print(np.apply_along_axis(_ab_to_dhi, 0, ab))
+print(np.apply_along_axis(_ab_to_dhi, 1, ab))
 
 plt.scatter(*ab)
 plt.gca().set_aspect('equal', adjustable='box')
