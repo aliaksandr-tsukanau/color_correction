@@ -1,10 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from math import degrees, atan2, radians, tan, sqrt, sin, cos, pi
 from grid.grid_instance import grid
 
 
-def _ab_to_dhi(ab):
+def ab_to_dhi(ab):
     """applies ab to dhi transformation to just one (a, b) pair"""
     # not divided into inner functions for computational efficiency
 
@@ -65,7 +64,7 @@ def _ab_to_dhi(ab):
     return d, h, i
 
 
-def _dhi_to_ab(dhi: np.ndarray):
+def dhi_to_ab(dhi: np.ndarray):
     """applies dhi to ab transformation to just one (d, h, i) tuple"""
     d, h, i = dhi
     angle_i = radians(grid.branches[int(i)].angle)
@@ -85,16 +84,16 @@ def _dhi_to_ab(dhi: np.ndarray):
     b = ab_onbranch_i[1] + h * sin(h_direction)
     return a, b
 
-
-ab = np.array([[100, 99]])
-
-dhi = np.apply_along_axis(_ab_to_dhi, 1, ab)
-print(dhi)
-
-ab2 = np.apply_along_axis(_dhi_to_ab, 1, dhi)
-
-print(ab2)
-# plt.scatter(*ab[0])
-plt.scatter(*ab2[0])
-plt.gca().set_aspect('equal', adjustable='box')
-plt.show()
+#
+# ab = np.array([[100, 99]])
+#
+# dhi = np.apply_along_axis(_ab_to_dhi, 1, ab)
+# print(dhi)
+#
+# ab2 = np.apply_along_axis(_dhi_to_ab, 1, dhi)
+#
+# print(ab2)
+# # plt.scatter(*ab[0])
+# plt.scatter(*ab2[0])
+# plt.gca().set_aspect('equal', adjustable='box')
+# plt.show()
