@@ -2,7 +2,7 @@ from image.image import INITIAL_IMAGE
 import numpy as np
 from skimage import color
 from grid.grid_instance import grid
-from math import atan2, degrees, tan, radians, sqrt
+from math import atan2, degrees, tan, radians, sqrt, cos, sin
 
 
 def get_unique_colors_lab(image):
@@ -101,4 +101,22 @@ def update_lut_ab(initial, grid):
     raise NotImplementedError
 
 
-print(LUT_DHI)
+def _dhi_to_ab(dhi: np.ndarray):
+    """applies dhi to ab transformation to just one (d, h, i) tuple"""
+    d, h, i = dhi
+    angle_i = radians(grid.branches[i].angle)
+    ab_onbranch_i = cos(angle_i), sin(angle_i)
+    # (a, b) coordinates of point on branch i at distance d from center
+
+    angle_next = radians(grid.branches[(i + 1) % len(grid.branches)].angle)
+    ab_on_nextbranch = cos(angle_next), sin(angle_next)
+    # (a, b) coordinates of point on branch next after the i-th at distance d from center
+
+    diff = (ab_on_nextbranch[0] - ab_onbranch_i[0],
+            ab_on_nextbranch[1] - ab_onbranch_i[1])
+    h_direction = atan2(diff[1], diff[0])
+    # angle between a axis and horde
+
+    a = ab_onbranch_i + h * cos(h_direction)
+    b = ab_onbranch_i + h * sin(h_direction)
+    return a, b
