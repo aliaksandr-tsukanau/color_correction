@@ -32,6 +32,7 @@ class ApplicationWindow(QMainWindow):
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
 
         self._draw_present_colors(painter)
+        self._draw_invisible_nodes(painter)
 
     def _draw_present_colors(self, painter: QPainter):
         """Mark colors present in initial picture as white dots on palette"""
@@ -39,6 +40,12 @@ class ApplicationWindow(QMainWindow):
         for ab in AB_UNIQUE_FOR_PYQT:
             painter.drawPoint(ab[1], ab[0])
             # 1, then 0 is no mistake
+
+    def _draw_invisible_nodes(self, painter: QPainter):
+        painter.setPen(QPen(Qt.darkYellow, 1, Qt.SolidLine))
+        for branch in grid.invisible_nodes:
+            for ab in branch:
+                painter.drawPoint(*(ab + grid.radius))
 
 
 def start():

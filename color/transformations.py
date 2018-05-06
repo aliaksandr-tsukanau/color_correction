@@ -11,15 +11,15 @@ def ab_to_dhi(ab):
 
     # handle situation when a or b is 0
     if a0 == 0:
-        d = abs(b0)
+        d = np.abs(b0)
         i = 0 if d >= 0 else len(grid.branches) / 2
         return d, 0, i
     if b0 == 0:
-        d = abs(a0)
+        d = np.abs(a0)
         i = len(grid.branches) / 4 if d >= 0 else len(grid.branches) / 4 * 3
         return d, 0, i
 
-    theta0 = (atan2(b0, a0) + 2 * pi) % (2 * pi)  # angle which is a polar coordinate of given point
+    theta0 = (np.arctan2(b0, a0) + 2 * pi) % (2 * pi)  # angle which is a polar coordinate of given point
     branches_angles = np.array([radians(branch.angle) for branch in grid.branches])
 
     i = branches_angles[branches_angles < theta0].argmax()

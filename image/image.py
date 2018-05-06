@@ -1,5 +1,5 @@
 import numpy as np
-from skimage import data, io
+from skimage import data, io, color
 import matplotlib.pyplot as plt
 
 from color.palette import RGB_BACKGROUND
@@ -8,6 +8,7 @@ from color.palette import RGB_BACKGROUND
 # INITIAL_IMAGE = io.imread(r'C:\Users\aliaksandr.tsukanau\Desktop\sun.jpg')
 # INITIAL_IMAGE = RGB_BACKGROUND
 INITIAL_IMAGE = data.hubble_deep_field()
+INITIAL_IMAGE_LAB = color.rgb2lab(INITIAL_IMAGE)
 # plt.imshow(INITIAL_IMAGE)
 # plt.show()horse()
 

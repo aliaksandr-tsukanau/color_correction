@@ -2,7 +2,7 @@ from .node import Node
 
 
 class Branch:
-    """A collection of nodes which are by default located on the same line from center to edge"""
+    """A collection of nodes which are by default located on the same line from center to periphery"""
     def __init__(self, angle, nodes_number, radius):
         self.nodes = [Node.from_polar(
                                       r=radius * i / (nodes_number - 1),
