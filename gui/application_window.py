@@ -42,7 +42,7 @@ class ApplicationWindow(QMainWindow):
             # 1, then 0 is no mistake
 
     def _draw_invisible_nodes(self, painter: QPainter):
-        painter.setPen(QPen(Qt.darkYellow, 1, Qt.SolidLine))
+        painter.setPen(QPen(Qt.darkYellow, 3, Qt.SolidLine))
         for branch in grid.invisible_nodes:
             for ab in branch:
                 painter.drawPoint(*(ab + grid.radius))

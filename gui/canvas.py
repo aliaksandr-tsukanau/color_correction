@@ -92,7 +92,7 @@ class DragAndDropCanvas(QWidget):
         node_to_update = grid[int(self.draggin_idx)]
         # int() call is required since islice inside Grid.__getattr__()
         # does not accept numpy index
-        node_to_update.update_branch(*point)
+        node_to_update.update_grid(*point)
 
         self.update()
 
