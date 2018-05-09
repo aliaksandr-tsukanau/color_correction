@@ -29,34 +29,5 @@ AB_UNIQUE_FOR_PYQT = AB_UNIQUE / 128 * grid.radius + grid.radius
 # as np array of shape (..., 2) containing pairs of (b, a) color coordinates in CIELAB color space
 
 
-def generate_initial_dhi(lut_ab_initial):
-    return np.apply_along_axis(ab_to_dhi, 1, lut_ab_initial)
-LUT_AB = {'initial': AB_UNIQUE, 'corrected': AB_UNIQUE}
-# LUT_RGB = np.empty()
-
-# LUT_DHI = {k: generate_initial_dhi(LUT_AB['initial']) for k in ['initial', 'corrected']}
-# print(LUT_DHI['corrected'].shape)
-#
-# LUT_AB['corrected'] = np.apply_along_axis(dhi_to_ab, 1, LUT_DHI['corrected'])
-# print(LUT_AB['corrected'].shape)
-# print(LUT_AB)
-
-
-def update_lut_ab(initial, grid):
-    """calculates new colors mapped to initial colors using nodes positions"""
-
-    raise NotImplementedError
-
-
-def get_corrected_image():
-    def change_lab_pixel(lab):
-        l, b, a = lab
-        new_pixel = np.empty((3,))
-        new_pixel[0] = l
-        i = np.where((LUT_AB['initial'] == (b, a)).all(axis=1))
-        new_pixel[1:] = LUT_AB['corrected'][i]
-        return new_pixel
-
-    return np.apply_along_axis(change_lab_pixel, 2, INITIAL_IMAGE_LAB)
 
 

@@ -83,8 +83,6 @@ class DragAndDropCanvas(QWidget):
                     return None
             self.draggin_idx = _get_clicked_node_idx()
 
-
-
     def _redraw_to_new_mouse_position(self, evt):
         point = self._get_mouse_position(evt)
         self._nodes[self.draggin_idx] = point

@@ -5,7 +5,7 @@ from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from color.correction import AB_UNIQUE_FOR_PYQT
-from color.palette import RGB_BACKGROUND
+from color.palette import PALETTE
 from grid.grid_instance import grid
 from gui.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
@@ -24,7 +24,7 @@ class ApplicationWindow(QMainWindow):
     def paintEvent(self, e):
         painter = QPainter(self)
 
-        background = to_qimage(RGB_BACKGROUND)
+        background = to_qimage(PALETTE.rgb)
         painter.drawImage(QRect(0, 0, self._palette_size, self._palette_size), background)
 
         initial_image = to_qimage(INITIAL_IMAGE)
@@ -42,7 +42,7 @@ class ApplicationWindow(QMainWindow):
             # 1, then 0 is no mistake
 
     def _draw_invisible_nodes(self, painter: QPainter):
-        painter.setPen(QPen(Qt.darkYellow, 3, Qt.SolidLine))
+        painter.setPen(QPen(Qt.darkYellow, 2, Qt.SolidLine))
         for branch in grid.invisible_nodes:
             for ab in branch:
                 painter.drawPoint(*(ab + grid.radius))
