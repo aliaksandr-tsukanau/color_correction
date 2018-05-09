@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # INITIAL_IMAGE = io.imread(r'C:\Users\aliaksandr.tsukanau\Desktop\sun.jpg')
 # INITIAL_IMAGE = PALETTE.rgb
 INITIAL_IMAGE = data.hubble_deep_field()
-INITIAL_IMAGE_LAB = color.rgb2lab(INITIAL_IMAGE)
+INITIAL_IMAGE_LAB = np.require(color.rgb2lab(INITIAL_IMAGE), dtype='int8')
 # plt.imshow(INITIAL_IMAGE)
 # plt.show()horse()
 
