@@ -38,6 +38,37 @@ class Grid:
             for node in branch.nodes:
                 yield node
 
+    def recalculate_invisibles(self):
+        branch_indices = [i for i in range(0,
+                                           self.invisible_branches,
+                                           int(self.invisible_branches / len(self.branches)))]
+        node_indices = [j for j in range(0,
+                                         self.inv_nodes_per_branch,
+                                         int(self.inv_nodes_per_branch / (len(self.branches) - 1)))]
+
+        def recalculate_onbranches():
+            for i, inv_i in enumerate(branch_indices):
+                for j, (inv_j_prev, inv_j_next) in enumerate(zip(node_indices, node_indices[1:])):
+                    prev_node = self.branches[i].nodes[j].numpy_coords
+                    next_node = self.branches[i].nodes[j + 1].numpy_coords
+                    for k in range(inv_j_prev, inv_j_next + 1):
+                        self.invisible_nodes[inv_i, k] = \
+                            prev_node + (next_node - prev_node) / (inv_j_next - inv_j_prev) * (k - inv_j_prev)
+
+        def recalculate_between():
+            for j in range(self.inv_nodes_per_branch):
+                for i, (inv_i_prev, inv_i_next) in \
+                        enumerate(zip(branch_indices, branch_indices[1:] + [branch_indices[0]])):
+                    prev_node = self.invisible_nodes[inv_i_prev, j]
+                    next_node = self.invisible_nodes[inv_i_next, j]
+                    upper_bounder = inv_i_next if i != 7 else self.invisible_branches - 1
+                    for k in range(inv_i_prev, upper_bounder + 1):
+                        self.invisible_nodes[k, j] = prev_node \
+                                + (next_node - prev_node) / (upper_bounder - inv_i_prev) * (k - inv_i_prev)
+
+        recalculate_onbranches()
+        recalculate_between()
+
     def __getitem__(self, item):
         return self.branches[item // len(self.branches)].nodes[item % len(self.branches)]
 
