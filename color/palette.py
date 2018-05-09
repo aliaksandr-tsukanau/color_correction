@@ -2,13 +2,19 @@ from skimage import color
 import matplotlib.pyplot as plt
 from grid.grid_instance import grid
 import numpy as np
+import pickle
 
 
 class Palette:
     def __init__(self):
         self.lab = Palette._generate_lab_palette()
         self.rgb = self._convert_lab_to_rgb()
-        print(self._get_nearest_index(np.array([2, 20, 30])))
+        try:
+            mapping = pickle.load(file=open('mapping.dat', 'rb'))
+        except FileNotFoundError:
+            mapping = np.apply_along_axis(self._get_nearest_index, 2, self.lab)
+            pickle.dump(mapping, file=open('mapping.dat', 'wb'))
+        print(mapping)
 
     @staticmethod
     def _generate_lab_palette(l_component=50):
@@ -40,8 +46,10 @@ class Palette:
         dist = nds - point[np.newaxis, np.newaxis, :]
         dist = dist[:, :, 0] ** 2 + dist[:, :, 1] ** 2
         index = np.unravel_index(dist.argmin(), nds.shape[:2])
-        return np.array([point_l, *grid.invisible_nodes[index]])
-
+        # result = np.empty((3,))
+        # result[0] = point_l
+        # result[1:] = grid.invisible_nodes[index]
+        return index
 
 
 PALETTE = Palette()
@@ -50,4 +58,3 @@ if __name__ == '__main__':
     # quick test using matplotlib
     plt.imshow(PALETTE.rgb)
     plt.show()
-
