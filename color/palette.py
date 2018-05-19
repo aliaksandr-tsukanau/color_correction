@@ -10,11 +10,13 @@ class Palette:
         self.lab = Palette._generate_lab_palette()
         self.rgb = self._convert_lab_to_rgb()
         try:
-            mapping = pickle.load(file=open('mapping.dat', 'rb'))
+            with open('mapping.dat', 'rb') as f:
+                self.mapping = pickle.load(file=f)
         except FileNotFoundError:
-            mapping = np.apply_along_axis(self._get_nearest_index, 2, self.lab)
-            pickle.dump(mapping, file=open('mapping.dat', 'wb'))
-        print(mapping)
+            self.mapping = np.apply_along_axis(self._get_nearest_index, 2, self.lab)
+            with open('mapping.dat', 'wb') as f:
+                pickle.dump(self.mapping, file=f)
+        print(self.mapping)
 
     @staticmethod
     def _generate_lab_palette(l_component=50):
@@ -41,7 +43,7 @@ class Palette:
 
     def _get_nearest_index(self, point: np.ndarray):
         nds = grid.initial_invisible_nodes
-        point_l = point[0]
+        # point_l = point[0]
         point = point[1:]
         dist = nds - point[np.newaxis, np.newaxis, :]
         dist = dist[:, :, 0] ** 2 + dist[:, :, 1] ** 2

@@ -2,24 +2,35 @@ import sys
 
 from PyQt5.QtCore import QRect, Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction
 
-from color.correction import AB_UNIQUE_FOR_PYQT
+from image.image import AB_UNIQUE_FOR_PYQT
 from color.palette import PALETTE
 from grid.grid_instance import grid
 from gui.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
-from image.image import INITIAL_IMAGE
+from image.image import INITIAL_IMAGE, PROCESSED_IMAGE, correct_image
 
 
 class ApplicationWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._palette_size = grid.radius * 2
-        self.setFixedWidth(self._palette_size +\
-                           INITIAL_IMAGE.shape[1] * self._palette_size / INITIAL_IMAGE.shape[0])
+        self.setFixedWidth(self._palette_size
+                           + INITIAL_IMAGE.shape[1] * self._palette_size / INITIAL_IMAGE.shape[0])
                            # to exactly fit the picture
         self.setFixedHeight(self._palette_size)
+
+        extractAction = QAction("&GET TO THE CHOPPAH!!!", self)
+        extractAction.setShortcut("Ctrl+Q")
+        extractAction.setStatusTip('Leave The App')
+        extractAction.triggered.connect(correct_image)
+
+        # self.statusBar()
+
+        mainMenu = self.menuBar()
+        fileMenu = mainMenu.addMenu('&File')
+        fileMenu.addAction(extractAction)
 
     def paintEvent(self, e):
         painter = QPainter(self)
@@ -27,12 +38,12 @@ class ApplicationWindow(QMainWindow):
         background = to_qimage(PALETTE.rgb)
         painter.drawImage(QRect(0, 0, self._palette_size, self._palette_size), background)
 
-        initial_image = to_qimage(INITIAL_IMAGE)
+        initial_image = to_qimage(PROCESSED_IMAGE)
         scaled_img = initial_image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
 
         self._draw_present_colors(painter)
-        self._draw_invisible_nodes(painter)
+        # self._draw_invisible_nodes(painter)
 
     def _draw_present_colors(self, painter: QPainter):
         """Mark colors present in initial picture as white dots on palette"""

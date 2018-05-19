@@ -4,6 +4,7 @@ from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QWidget
 
 from grid.grid_instance import grid
+from image.image import correct_image
 
 import pprint
 
