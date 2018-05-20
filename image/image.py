@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 from grid.grid_instance import grid
 
 
-INITIAL_IMAGE = io.imread('/home/sasha/Downloads/Telegram Desktop/photo_2018-05-20_01-25-59.jpg')
+INITIAL_IMAGE = io.imread('/home/sasha/Downloads/Telegram Desktop/photo_2018-05-20_11-12-04.jpg')
 # INITIAL_IMAGE = PALETTE.rgb
-INITIAL_IMAGE = data.astronaut()
+# INITIAL_IMAGE = data.astronaut()
 INITIAL_IMAGE_LAB = np.require(color.rgb2lab(INITIAL_IMAGE), dtype='int8')
 # plt.imshow(INITIAL_IMAGE)
 # plt.show()horse()
@@ -43,12 +43,14 @@ AB_UNIQUE_FOR_PYQT = AB_UNIQUE / 128 * grid.radius + grid.radius
 
 
 def correct_image():
-    processed_image_lab = np.empty(INITIAL_IMAGE.shape)
-    for i, j in np.ndindex(INITIAL_IMAGE_LAB.shape[:2]):
-        l_, a, b = INITIAL_IMAGE_LAB[i, j, :]
-        idx = PALETTE.mapping[a + 128, b + 128]
-        a, b = grid.invisible_nodes[tuple(idx)]
-        processed_image_lab[i, j] = l_, a, b
+    # chain the two maps
+    chained = grid.invisible_nodes[(*np.moveaxis(PALETTE.mapping, 2, 0),)]
+    # split color channels
+    c1, *c23 = np.moveaxis(INITIAL_IMAGE_LAB, 2, 0)
+    # add 128
+    c23 = *map(np.add, c23, (127, 127)),
+    # apply chained map
+    processed_image_lab = np.concatenate([c1[..., None], chained[c23]], axis=2)
     global PROCESSED_IMAGE
     PROCESSED_IMAGE = color.lab2rgb(processed_image_lab)
     plt.imshow(INITIAL_IMAGE)
