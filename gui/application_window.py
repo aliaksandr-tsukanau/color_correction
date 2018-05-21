@@ -21,7 +21,7 @@ class ApplicationWindow(QMainWindow):
                            # to exactly fit the picture
         self.setFixedHeight(self._palette_size)
 
-        extractAction = QAction("&GET TO THE CHOPPAH!!!", self)
+        extractAction = QAction("Apply LUT", self)
         extractAction.setShortcut("Ctrl+Q")
         extractAction.setStatusTip('Leave The App')
         extractAction.triggered.connect(correct_image)
@@ -49,8 +49,7 @@ class ApplicationWindow(QMainWindow):
         """Mark colors present in initial picture as white dots on palette"""
         painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
         for ab in AB_UNIQUE_FOR_PYQT:
-            painter.drawPoint(ab[1], ab[0])
-            # 1, then 0 is no mistake
+            painter.drawPoint(*ab)
 
     def _draw_invisible_nodes(self, painter: QPainter):
         painter.setPen(QPen(Qt.darkYellow, 2, Qt.SolidLine))

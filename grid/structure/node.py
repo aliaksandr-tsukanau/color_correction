@@ -32,7 +32,7 @@ class Node:
         """returns self.x, self.y as numpy array"""
         return np.array([self.x, self.y])
 
-    def update_grid(self, new_x, new_y):
+    def update_grid(self, new_x, new_y, recalculate_all=False):
         """Updates nodes coordinates for entire branch stretching and squeezing regions between pinned nodes.
         new_x and new_y are coordinates in PyQt form (not zero-centered)"""
         self.is_pinned = True
@@ -43,7 +43,8 @@ class Node:
         self.y = new_y - offset
 
         self.parent_branch.recalculate_child_nodes()
-        self.parent_branch.parent_grid.recalculate_invisibles()
+        if recalculate_all:
+            self.parent_branch.parent_grid.recalculate_invisibles()
 
     @property
     def displacement(self):

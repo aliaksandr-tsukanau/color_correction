@@ -84,14 +84,14 @@ class DragAndDropCanvas(QWidget):
                     return None
             self.draggin_idx = _get_clicked_node_idx()
 
-    def _redraw_to_new_mouse_position(self, evt):
+    def _redraw_to_new_mouse_position(self, evt, recalculate_all=False):
         point = self._get_mouse_position(evt)
         self._nodes[self.draggin_idx] = point
 
         node_to_update = grid[int(self.draggin_idx)]
         # int() call is required since islice inside Grid.__getattr__()
         # does not accept numpy index
-        node_to_update.update_grid(*point)
+        node_to_update.update_grid(*point, recalculate_all)
 
         self.update()
 
@@ -101,6 +101,6 @@ class DragAndDropCanvas(QWidget):
 
     def mouseReleaseEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
-            self._redraw_to_new_mouse_position(evt)
+            self._redraw_to_new_mouse_position(evt, recalculate_all=True)
             self.draggin_idx = None
 
