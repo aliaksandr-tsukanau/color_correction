@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 
-from grid.structure.grid import Grid
+from grid.grid import Grid
 
 
 class Palette:

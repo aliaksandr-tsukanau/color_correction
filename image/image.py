@@ -5,11 +5,8 @@ import matplotlib.pyplot as plt
 
 
 INITIAL_IMAGE = io.imread('/home/sasha/snap/telegram-desktop/common/photo_2018-04-10_11-45-36.jpg')
-# INITIAL_IMAGE = PALETTE.rgb
-# INITIAL_IMAGE = data.astronaut()
+
 INITIAL_IMAGE_LAB = np.require(color.rgb2lab(INITIAL_IMAGE), dtype='int8')
-# plt.imshow(INITIAL_IMAGE)
-# plt.show()horse()
 
 PROCESSED_IMAGE = deepcopy(INITIAL_IMAGE)  # np array 3 dim
 
@@ -30,11 +27,8 @@ def get_unique_colors_lab(image):
     return lab_unique_squeezed
 
 
-AB_UNIQUE = get_unique_colors_lab(INITIAL_IMAGE)
-
-
-def get_unique_clrs_for_pyqt(grid):
-    return AB_UNIQUE / 128 * grid.radius + grid.radius
+def get_unique_colors_for_pyqt(radius):
+    return get_unique_colors_lab(INITIAL_IMAGE) / 128 * radius + radius
 
 # contains unique colors for image uploaded to application
 # as np array of shape (..., 2) containing pairs of (b, a) color coordinates in CIELAB color space

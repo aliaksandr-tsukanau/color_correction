@@ -5,8 +5,8 @@ from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction
 
 from color.palette import Palette
-from grid.structure.grid import Grid
-from image.image import get_unique_clrs_for_pyqt
+from grid.grid import Grid
+from image.image import get_unique_colors_for_pyqt
 from gui.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
 from image.image import INITIAL_IMAGE, PROCESSED_IMAGE, correct_image
@@ -35,6 +35,8 @@ class ApplicationWindow(QMainWindow):
         fileMenu = mainMenu.addMenu('&File')
         fileMenu.addAction(extractAction)
 
+        self.unique = get_unique_colors_for_pyqt(grid.radius)
+
     def paintEvent(self, e):
         painter = QPainter(self)
 
@@ -51,7 +53,7 @@ class ApplicationWindow(QMainWindow):
     def _draw_present_colors(self, painter: QPainter):
         """Mark colors present in initial picture as white dots on palette"""
         painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
-        for ab in get_unique_clrs_for_pyqt(self._grid):
+        for ab in get_unique_colors_for_pyqt(self._grid.radius):
             painter.drawPoint(*ab)
 
     def _draw_invisible_nodes(self, painter: QPainter):
