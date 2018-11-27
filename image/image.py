@@ -34,6 +34,7 @@ def get_unique_colors_for_pyqt(initial_rgb, radius):
 # as np array of shape (..., 2) containing pairs of (b, a) color coordinates in CIELAB color space
 
 
+# TODO: switch to opencv for better speed
 def correct_image(initial_lab, palette, grid):
     # chain the two maps
     chained = grid.invisible_nodes[(*np.moveaxis(palette.mapping, 2, 0),)]
