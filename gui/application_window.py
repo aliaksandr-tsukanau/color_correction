@@ -1,4 +1,5 @@
 import sys
+from copy import deepcopy
 
 from PyQt5.QtCore import QRect, Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
@@ -9,48 +10,44 @@ from grid.grid import Grid
 from image.image import get_unique_colors_for_pyqt
 from gui.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
-from image.image import INITIAL_IMAGE, PROCESSED_IMAGE, correct_image
+from image.image import read_initial_rgb, initial_to_lab, correct_image
 
 
 class ApplicationWindow(QMainWindow):
     def __init__(self, grid, palette):
         super().__init__()
+        self.aaa = 0
         self._palette = palette
         self._grid = grid
-
         self._palette_size = grid.radius * 2
+
+        self.initial_rgb = read_initial_rgb()
+        self.initial_lab = initial_to_lab(self.initial_rgb)
+        self.processed = deepcopy(self.initial_rgb)
+
         self._set_up_ui()
 
-        self.unique = get_unique_colors_for_pyqt(grid.radius)
+        self.unique = get_unique_colors_for_pyqt(self.initial_rgb, grid.radius)
 
     def _set_up_ui(self):
         self.setFixedWidth(self._palette_size
-                           + INITIAL_IMAGE.shape[1] * self._palette_size / INITIAL_IMAGE.shape[0])
+                           + self.initial_rgb.shape[1] * self._palette_size / self.initial_rgb.shape[0])
         # to exactly fit the picture
         self.setFixedHeight(self._palette_size)
 
-        extractAction = QAction("Apply LUT", self)
-        extractAction.setShortcut("Ctrl+Q")
-        extractAction.setStatusTip('Leave The App')
-        extractAction.triggered.connect(lambda: correct_image(self._palette, self._grid))
-
-        # self.statusBar()
-
-        mainMenu = self.menuBar()
-        fileMenu = mainMenu.addMenu('&File')
-        fileMenu.addAction(extractAction)
-
     def paintEvent(self, e):
+        print(self.aaa)
+        self.aaa+=1
         painter = QPainter(self)
 
         background = to_qimage(self._palette.rgb)
         painter.drawImage(QRect(0, 0, self._palette_size, self._palette_size), background)
 
-        initial_image = to_qimage(PROCESSED_IMAGE)
+        initial_image = to_qimage(self.processed)
         scaled_img = initial_image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
-
-        self._draw_present_colors(painter)
+        if self.aaa < 10:
+            self._draw_present_colors(painter)
         # self._draw_invisible_nodes(painter)
 
     def _draw_present_colors(self, painter: QPainter):
@@ -74,7 +71,7 @@ def start():
     palette = Palette(grid)
 
     main_window = ApplicationWindow(grid, palette)
-    main_window.setCentralWidget(DragAndDropCanvas(grid))
+    main_window.setCentralWidget(DragAndDropCanvas(grid, palette, parent=main_window))
     main_window.show()
     sys.exit(application.exec_())
 

@@ -5,18 +5,21 @@ from PyQt5.QtWidgets import QWidget
 
 # TODO: not allow nodes go out of canvas
 # TODO: fix center behaviour
+from image.image import correct_image
 
 
 class DragAndDropCanvas(QWidget):
     """Custom canvas (QPainter-like) widget that supports dragging of nodes by mouse"""
 
-    def __init__(self, grid, parent=None, delta=30):
+    def __init__(self, grid, palette, parent=None, delta=30):
         """delta - minimum distance at which node reacts to mouse dragging\
         (actually square distance).
         Affects grid sensitivity"""
         super().__init__(parent)
         self._delta = delta
+        self._palette = palette
         self._grid = grid
+        self._parent = parent
         
         self.draggin_idx = None
         self.setGeometry(0, 0, self._grid.radius * 2, self._grid.radius * 2)
@@ -100,4 +103,5 @@ class DragAndDropCanvas(QWidget):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
             self._redraw_to_new_mouse_position(evt, recalculate_all=True)
             self.draggin_idx = None
+            self._parent.processed = correct_image(self._parent.initial_lab, self._palette, self._grid)
 

@@ -1,14 +1,14 @@
 import numpy as np
 from skimage import data, io, color
-from copy import deepcopy
 import matplotlib.pyplot as plt
 
 
-INITIAL_IMAGE = io.imread('/home/sasha/snap/telegram-desktop/common/photo_2018-04-10_11-45-36.jpg')
+def read_initial_rgb():
+    return io.imread('/home/sasha/snap/telegram-desktop/common/photo_2018-04-10_11-45-36.jpg')
 
-INITIAL_IMAGE_LAB = np.require(color.rgb2lab(INITIAL_IMAGE), dtype='int8')
 
-PROCESSED_IMAGE = deepcopy(INITIAL_IMAGE)  # np array 3 dim
+def initial_to_lab(initial_rgb):
+    return np.require(color.rgb2lab(initial_rgb), dtype='int8')
 
 
 def get_unique_colors_lab(image):
@@ -27,26 +27,23 @@ def get_unique_colors_lab(image):
     return lab_unique_squeezed
 
 
-def get_unique_colors_for_pyqt(radius):
-    return get_unique_colors_lab(INITIAL_IMAGE) / 128 * radius + radius
+def get_unique_colors_for_pyqt(initial_rgb, radius):
+    return get_unique_colors_lab(initial_rgb) / 128 * radius + radius
 
 # contains unique colors for image uploaded to application
 # as np array of shape (..., 2) containing pairs of (b, a) color coordinates in CIELAB color space
 
 
-def correct_image(palette, grid):
+def correct_image(initial_lab, palette, grid):
     # chain the two maps
     chained = grid.invisible_nodes[(*np.moveaxis(palette.mapping, 2, 0),)]
     # split color channels
-    c1, *c23 = np.moveaxis(INITIAL_IMAGE_LAB, 2, 0)
+    c1, *c23 = np.moveaxis(initial_lab, 2, 0)
     # add 128
     c23 = *map(np.add, c23, (127, 127)),
     # apply chained map
     processed_image_lab = np.concatenate([c1[..., None], chained[c23]], axis=2)
-    global PROCESSED_IMAGE
-    PROCESSED_IMAGE = color.lab2rgb(processed_image_lab)
-    plt.imshow(INITIAL_IMAGE)
-    plt.imshow(PROCESSED_IMAGE)
-    plt.show()
-    PROCESSED_IMAGE = np.require(PROCESSED_IMAGE * 255, np.uint8, 'C')
+    processed_image_rgb = color.lab2rgb(processed_image_lab)
+    processed_for_pyqt = np.require(processed_image_rgb * 255, np.uint8, 'C')
+    return processed_for_pyqt
 
