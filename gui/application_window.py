@@ -19,9 +19,14 @@ class ApplicationWindow(QMainWindow):
         self._grid = grid
 
         self._palette_size = grid.radius * 2
+        self._set_up_ui()
+
+        self.unique = get_unique_colors_for_pyqt(grid.radius)
+
+    def _set_up_ui(self):
         self.setFixedWidth(self._palette_size
                            + INITIAL_IMAGE.shape[1] * self._palette_size / INITIAL_IMAGE.shape[0])
-                           # to exactly fit the picture
+        # to exactly fit the picture
         self.setFixedHeight(self._palette_size)
 
         extractAction = QAction("Apply LUT", self)
@@ -34,8 +39,6 @@ class ApplicationWindow(QMainWindow):
         mainMenu = self.menuBar()
         fileMenu = mainMenu.addMenu('&File')
         fileMenu.addAction(extractAction)
-
-        self.unique = get_unique_colors_for_pyqt(grid.radius)
 
     def paintEvent(self, e):
         painter = QPainter(self)
@@ -53,7 +56,7 @@ class ApplicationWindow(QMainWindow):
     def _draw_present_colors(self, painter: QPainter):
         """Mark colors present in initial picture as white dots on palette"""
         painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
-        for ab in get_unique_colors_for_pyqt(self._grid.radius):
+        for ab in self.unique:
             painter.drawPoint(*ab)
 
     def _draw_invisible_nodes(self, painter: QPainter):
