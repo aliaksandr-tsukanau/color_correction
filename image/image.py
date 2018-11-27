@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from grid.grid_instance import grid
 
 
-INITIAL_IMAGE = io.imread('/media/sasha/01D0EAC945E81C70/photo/вильнюс май 2018/DSC04290.JPG')
+INITIAL_IMAGE = io.imread('/home/sasha/snap/telegram-desktop/common/photo_2018-04-10_11-45-36.jpg')
 # INITIAL_IMAGE = PALETTE.rgb
 # INITIAL_IMAGE = data.astronaut()
 INITIAL_IMAGE_LAB = np.require(color.rgb2lab(INITIAL_IMAGE), dtype='int8')

@@ -9,14 +9,19 @@ class Palette:
     def __init__(self):
         self.lab = Palette._generate_lab_palette()
         self.rgb = self._convert_lab_to_rgb()
+        self.mapping = self._load_or_create_mapping()
+        print(self.mapping)
+
+    def _load_or_create_mapping(self):
         try:
             with open('mapping.dat', 'rb') as f:
-                self.mapping = pickle.load(file=f)
+                mapping = pickle.load(file=f)
+            return mapping
         except FileNotFoundError:
-            self.mapping = np.apply_along_axis(self._get_nearest_index, 2, self.lab)
+            mapping = np.apply_along_axis(self._get_nearest_index, 2, self.lab)
             with open('mapping.dat', 'wb') as f:
-                pickle.dump(self.mapping, file=f)
-        print(self.mapping)
+                pickle.dump(mapping, file=f)
+            return mapping
 
     @staticmethod
     def _generate_lab_palette(l_component=50):

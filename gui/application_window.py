@@ -52,6 +52,7 @@ class ApplicationWindow(QMainWindow):
             painter.drawPoint(*ab)
 
     def _draw_invisible_nodes(self, painter: QPainter):
+        # for debugging
         painter.setPen(QPen(Qt.darkYellow, 2, Qt.SolidLine))
         for branch in grid.invisible_nodes:
             for ab in branch:

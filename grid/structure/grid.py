@@ -10,8 +10,12 @@ class Grid:
         # branches_number must be dividable by 4
         # invisible_branches and inv_nodes_per_branch must be chosen so that invisible nodes contain visible
         self.radius = radius  # is needed for size of widget in GUI
-        self.branches = [Branch(angle, nodes_number=branches_number, grid=self)
-                         for angle in range(0, 360, int(360 / branches_number))]
+        self.branches = [
+            Branch(angle, number_of_nodes=branches_number, radius=radius)
+            for angle in range(
+                0, 360, int(360 / branches_number)
+            )
+        ]
         self.invisible_nodes = self._init_invisible_nodes(invisible_branches, inv_nodes_per_branch, radius)
         self.initial_invisible_nodes = self.invisible_nodes
         self.invisible_branches = invisible_branches
@@ -37,6 +41,14 @@ class Grid:
         for branch in self.branches:
             for node in branch.nodes:
                 yield node
+
+    def update_grid(self, recalculate_all=False):
+        """Updates nodes coordinates for entire branch stretching and squeezing regions between pinned nodes.
+        new_x and new_y are coordinates in PyQt form (not zero-centered)"""
+        for branch in self.branches:
+            branch.recalculate_child_nodes()
+        if recalculate_all:
+            self.recalculate_invisibles()
 
     def recalculate_invisibles(self):
         branch_indices = [i for i in range(0,

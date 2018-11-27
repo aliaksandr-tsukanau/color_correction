@@ -4,13 +4,10 @@ from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QWidget
 
 from grid.grid_instance import grid
-from image.image import correct_image
-
-import pprint
-
 
 # TODO: not allow nodes go out of canvas
 # TODO: fix center behaviour
+
 
 class DragAndDropCanvas(QWidget):
     """Custom canvas (QPainter-like) widget that supports dragging of nodes by mouse"""
@@ -91,7 +88,8 @@ class DragAndDropCanvas(QWidget):
         node_to_update = grid[int(self.draggin_idx)]
         # int() call is required since islice inside Grid.__getattr__()
         # does not accept numpy index
-        node_to_update.update_grid(*point, recalculate_all)
+        node_to_update.move_to(*(point - grid.radius))
+        grid.update_grid(recalculate_all)
 
         self.update()
 
