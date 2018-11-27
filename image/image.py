@@ -1,12 +1,7 @@
 import numpy as np
 from skimage import data, io, color
-from grid.grid_instance import grid
-from color.palette import PALETTE
 from copy import deepcopy
 import matplotlib.pyplot as plt
-
-# from color.palette import PALETTE
-from grid.grid_instance import grid
 
 
 INITIAL_IMAGE = io.imread('/home/sasha/snap/telegram-desktop/common/photo_2018-04-10_11-45-36.jpg')
@@ -37,14 +32,17 @@ def get_unique_colors_lab(image):
 
 AB_UNIQUE = get_unique_colors_lab(INITIAL_IMAGE)
 
-AB_UNIQUE_FOR_PYQT = AB_UNIQUE / 128 * grid.radius + grid.radius
+
+def get_unique_clrs_for_pyqt(grid):
+    return AB_UNIQUE / 128 * grid.radius + grid.radius
+
 # contains unique colors for image uploaded to application
 # as np array of shape (..., 2) containing pairs of (b, a) color coordinates in CIELAB color space
 
 
-def correct_image():
+def correct_image(palette, grid):
     # chain the two maps
-    chained = grid.invisible_nodes[(*np.moveaxis(PALETTE.mapping, 2, 0),)]
+    chained = grid.invisible_nodes[(*np.moveaxis(palette.mapping, 2, 0),)]
     # split color channels
     c1, *c23 = np.moveaxis(INITIAL_IMAGE_LAB, 2, 0)
     # add 128

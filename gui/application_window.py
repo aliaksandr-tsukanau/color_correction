@@ -4,17 +4,20 @@ from PyQt5.QtCore import QRect, Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction
 
-from image.image import AB_UNIQUE_FOR_PYQT
-from color.palette import PALETTE
-from grid.grid_instance import grid
+from color.palette import Palette
+from grid.structure.grid import Grid
+from image.image import get_unique_clrs_for_pyqt
 from gui.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
 from image.image import INITIAL_IMAGE, PROCESSED_IMAGE, correct_image
 
 
 class ApplicationWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, grid, palette):
+        super().__init__()
+        self._palette = palette
+        self._grid = grid
+
         self._palette_size = grid.radius * 2
         self.setFixedWidth(self._palette_size
                            + INITIAL_IMAGE.shape[1] * self._palette_size / INITIAL_IMAGE.shape[0])
@@ -24,7 +27,7 @@ class ApplicationWindow(QMainWindow):
         extractAction = QAction("Apply LUT", self)
         extractAction.setShortcut("Ctrl+Q")
         extractAction.setStatusTip('Leave The App')
-        extractAction.triggered.connect(correct_image)
+        extractAction.triggered.connect(lambda: correct_image(self._palette, self._grid))
 
         # self.statusBar()
 
@@ -35,7 +38,7 @@ class ApplicationWindow(QMainWindow):
     def paintEvent(self, e):
         painter = QPainter(self)
 
-        background = to_qimage(PALETTE.rgb)
+        background = to_qimage(self._palette.rgb)
         painter.drawImage(QRect(0, 0, self._palette_size, self._palette_size), background)
 
         initial_image = to_qimage(PROCESSED_IMAGE)
@@ -48,21 +51,25 @@ class ApplicationWindow(QMainWindow):
     def _draw_present_colors(self, painter: QPainter):
         """Mark colors present in initial picture as white dots on palette"""
         painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
-        for ab in AB_UNIQUE_FOR_PYQT:
+        for ab in get_unique_clrs_for_pyqt(self._grid):
             painter.drawPoint(*ab)
 
     def _draw_invisible_nodes(self, painter: QPainter):
         # for debugging
         painter.setPen(QPen(Qt.darkYellow, 2, Qt.SolidLine))
-        for branch in grid.invisible_nodes:
+        for branch in self._grid.invisible_nodes:
             for ab in branch:
-                painter.drawPoint(*(ab + grid.radius))
+                painter.drawPoint(*(ab + self._grid.radius))
 
 
 def start():
     application = QApplication(sys.argv)
-    main_window = ApplicationWindow()
-    main_window.setCentralWidget(DragAndDropCanvas())
+
+    grid = Grid(branches_number=8, radius=250, invisible_branches=320, inv_nodes_per_branch=71)
+    palette = Palette(grid)
+
+    main_window = ApplicationWindow(grid, palette)
+    main_window.setCentralWidget(DragAndDropCanvas(grid))
     main_window.show()
     sys.exit(application.exec_())
 

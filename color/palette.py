@@ -1,24 +1,25 @@
 from skimage import color
 import matplotlib.pyplot as plt
-from grid.grid_instance import grid
 import numpy as np
 import pickle
 
+from grid.structure.grid import Grid
+
 
 class Palette:
-    def __init__(self):
+    def __init__(self, grid):
         self.lab = Palette._generate_lab_palette()
         self.rgb = self._convert_lab_to_rgb()
-        self.mapping = self._load_or_create_mapping()
+        self.mapping = self._load_or_create_mapping(grid)
         print(self.mapping)
 
-    def _load_or_create_mapping(self):
+    def _load_or_create_mapping(self, grid):
         try:
             with open('mapping.dat', 'rb') as f:
                 mapping = pickle.load(file=f)
             return mapping
         except FileNotFoundError:
-            mapping = np.apply_along_axis(self._get_nearest_index, 2, self.lab)
+            mapping = np.apply_along_axis(self._get_nearest_index, 2, self.lab, grid)
             with open('mapping.dat', 'wb') as f:
                 pickle.dump(mapping, file=f)
             return mapping
@@ -47,7 +48,7 @@ class Palette:
         rgb = np.require(rgb, np.uint8, 'C')
         return rgb
 
-    def _get_nearest_index(self, point: np.ndarray):
+    def _get_nearest_index(self, point: np.ndarray, grid: Grid):
         nds = grid.initial_invisible_nodes
         # point_l = point[0]
         point = point[1:]
@@ -60,9 +61,9 @@ class Palette:
         return index
 
 
-PALETTE = Palette()
-
 if __name__ == '__main__':
     # quick test using matplotlib
-    plt.imshow(PALETTE.rgb)
+    grid = Grid(branches_number=8, radius=250, invisible_branches=320, inv_nodes_per_branch=71)
+    palette = Palette(grid)
+    plt.imshow(palette.rgb)
     plt.show()
