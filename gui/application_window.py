@@ -4,13 +4,15 @@ from copy import deepcopy
 from PyQt5.QtCore import QRect, Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction
+from skimage import transform
+import numpy as np
 
 from color.palette import Palette
 from grid.grid import Grid
 from image.image import get_unique_colors_for_pyqt
 from gui.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
-from image.image import read_initial_rgb, initial_to_lab, correct_image
+from image.image import read_initial_rgb, initial_to_lab
 
 
 class ApplicationWindow(QMainWindow):
@@ -28,6 +30,7 @@ class ApplicationWindow(QMainWindow):
         self._set_up_ui()
 
         self.unique = get_unique_colors_for_pyqt(self.initial_rgb, grid.radius)
+        self._background = self._construct_palette_with_unique_colors_layer()
 
     def _set_up_ui(self):
         self.setFixedWidth(self._palette_size
@@ -36,25 +39,23 @@ class ApplicationWindow(QMainWindow):
         self.setFixedHeight(self._palette_size)
 
     def paintEvent(self, e):
-        print(self.aaa)
-        self.aaa+=1
         painter = QPainter(self)
 
-        background = to_qimage(self._palette.rgb)
-        painter.drawImage(QRect(0, 0, self._palette_size, self._palette_size), background)
+        painter.drawImage(QPoint(0, 0), self._background)
 
         initial_image = to_qimage(self.processed)
         scaled_img = initial_image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
-        if self.aaa < 10:
-            self._draw_present_colors(painter)
+
         # self._draw_invisible_nodes(painter)
 
-    def _draw_present_colors(self, painter: QPainter):
-        """Mark colors present in initial picture as white dots on palette"""
-        painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
-        for ab in self.unique:
-            painter.drawPoint(*ab)
+    def _construct_palette_with_unique_colors_layer(self):
+        background = transform.resize(self._palette.rgb, (self._palette_size, self._palette_size))
+        background = 255 * background
+        for b, a in self.unique:
+            background[int(a), int(b)] = 255
+        background = np.require(background, np.uint8, 'C')
+        return to_qimage(background)
 
     def _draw_invisible_nodes(self, painter: QPainter):
         # for debugging
