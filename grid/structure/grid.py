@@ -35,13 +35,6 @@ class Grid:
                 nodes[i, j, :] = r * np.cos(angle), r * np.sin(angle)
         return nodes
 
-    def nodes(self):
-        """Generator that can be used to get all nodes of grid sequentially by branches.
-        Left as method not property to distinguish from Branch.nodes field"""
-        for branch in self.branches:
-            for node in branch.nodes:
-                yield node
-
     def update_grid(self, recalculate_all=False):
         """Updates nodes coordinates for entire branch stretching and squeezing regions between pinned nodes.
         new_x and new_y are coordinates in PyQt form (not zero-centered)"""

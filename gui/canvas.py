@@ -29,7 +29,7 @@ class DragAndDropCanvas(QWidget):
 
     def _update_nodes_array(self):
         """writes numpy array of all grid's nodes to instance field self._nodes"""
-        self._nodes = np.array([node.coords_for_canvas for node in grid.nodes()])
+        self._nodes = np.array([node.coords_for_canvas for branch in grid.branches for node in branch.nodes])
         # nodes are stored as a numpy copy to simplify and fasten calculations of distances
 
     def paintEvent(self, e):
@@ -85,9 +85,8 @@ class DragAndDropCanvas(QWidget):
         point = self._get_mouse_position(evt)
         self._nodes[self.draggin_idx] = point
 
-        node_to_update = grid[int(self.draggin_idx)]
-        # int() call is required since islice inside Grid.__getattr__()
-        # does not accept numpy index
+        node_to_update = grid[self.draggin_idx]
+
         node_to_update.move_to(*(point - grid.radius))
         grid.update_grid(recalculate_all)
 
