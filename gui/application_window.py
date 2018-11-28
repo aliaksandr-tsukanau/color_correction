@@ -68,7 +68,7 @@ class ApplicationWindow(QMainWindow):
 def start():
     application = QApplication(sys.argv)
 
-    grid = Grid(branches_number=8, radius=400, invisible_branches=320, inv_nodes_per_branch=71)
+    grid = Grid(branches_number=8, radius=250, invisible_branches=320, inv_nodes_per_branch=71)
     palette = Palette(grid)
 
     main_window = ApplicationWindow(grid, palette)
