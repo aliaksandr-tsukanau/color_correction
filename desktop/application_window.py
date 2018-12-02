@@ -1,7 +1,7 @@
 import sys
 from copy import deepcopy
 
-from PyQt5.QtCore import QRect, Qt, QPoint
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction
 from skimage import transform
@@ -10,7 +10,7 @@ import numpy as np
 from color.palette import Palette
 from grid.grid import Grid
 from image.image import get_unique_colors_for_pyqt
-from gui.canvas import DragAndDropCanvas
+from desktop.canvas import DragAndDropCanvas
 from image.to_qimage import to_qimage
 from image.image import read_initial_rgb, initial_to_lab
 

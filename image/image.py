@@ -1,6 +1,5 @@
 import numpy as np
-from skimage import data, io, color
-import matplotlib.pyplot as plt
+from skimage import io, color
 
 
 def read_initial_rgb():
