@@ -9,7 +9,6 @@ mongo = PyMongo(app)
 
 @app.route('/')
 def root():
-
     return 'Hello'
 
 

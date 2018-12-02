@@ -1,0 +1,5 @@
+numpy==1.15.4
+scikit-image==0.14.1
+pyqt5==5.11.3
+flask==1.0.2
+flask-pymongo==2.2.0

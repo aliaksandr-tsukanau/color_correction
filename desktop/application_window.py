@@ -18,7 +18,6 @@ from image.image import read_initial_rgb, initial_to_lab
 class ApplicationWindow(QMainWindow):
     def __init__(self, grid, palette):
         super().__init__()
-        self.aaa = 0
         self._palette = palette
         self._grid = grid
         self._palette_size = grid.radius * 2
