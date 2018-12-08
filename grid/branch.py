@@ -19,8 +19,6 @@ class Branch:
         for i in (0, -1):
             self.nodes[i].is_pinned = True
 
-        self.angle = angle
-
     def recalculate_child_nodes(self):
         nodes = self.nodes
         pinned_indices = [i for i, node in enumerate(nodes) if node.is_pinned]
@@ -31,4 +29,4 @@ class Branch:
                 nodes[j].y = nodes[prev].y + (nodes[next_].y - nodes[prev].y) * (j - prev) / (next_ - prev)
 
     def __repr__(self):
-        return 'Branch(angle=%r, nodes_number=%d, radius=%r)' % (self.angle, len(self.nodes), self.radius)
+        return 'Branch(nodes_number=%d, radius=%r)' % (len(self.nodes), self.radius)
