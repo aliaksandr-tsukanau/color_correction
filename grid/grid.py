@@ -11,7 +11,7 @@ class Grid:
         # invisible_branches and inv_nodes_per_branch must be chosen so that invisible nodes contain visible
         self.radius = radius  # is needed for size of widget in GUI
         self.branches = [
-            Branch(angle, number_of_nodes=branches_number, radius=radius)
+            Branch.from_angle(angle, number_of_nodes=branches_number, radius=radius)
             for angle in range(
                 0, 360, int(360 / branches_number)
             )

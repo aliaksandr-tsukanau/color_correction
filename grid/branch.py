@@ -1,23 +1,29 @@
+from typing import List
+
 from .node import Node
 
 
 class Branch:
     """A collection of nodes which are by default located on the same line from center to periphery"""
-    def __init__(self, angle, number_of_nodes, radius):
-        self.radius = radius
+    def __init__(self, nodes: List[Node]):
+        self.nodes = nodes
 
-        self.nodes = [
+    @classmethod
+    def from_angle(cls, angle, number_of_nodes, radius):
+        nodes = [
             Node.from_polar(
-                r=self.radius * i / (number_of_nodes - 1),
+                r=radius * i / (number_of_nodes - 1),
                 theta=angle,
-                offset=self.radius
+                offset=radius
             )
             for i in range(0, number_of_nodes)
         ]
 
         # pin central and edge nodes
         for i in (0, -1):
-            self.nodes[i].is_pinned = True
+            nodes[i].is_pinned = True
+
+        return cls(nodes)
 
     def recalculate_child_nodes(self):
         nodes = self.nodes
