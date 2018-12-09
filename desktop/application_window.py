@@ -2,8 +2,8 @@ import sys
 from copy import deepcopy
 
 from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QPainter, QPen
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction
+from PyQt5.QtGui import QPainter, QPen, QKeySequence
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QShortcut
 from skimage import transform
 import numpy as np
 
@@ -16,17 +16,19 @@ from image.image import read_initial_rgb, initial_to_lab
 
 
 class ApplicationWindow(QMainWindow):
-    def __init__(self, grid, palette):
-        super().__init__()
+    def __init__(self, grid, palette, parent=None):
+        super().__init__(parent)
         self._palette = palette
         self._grid = grid
         self._palette_size = grid.radius * 2
+        self._parent = parent
 
         self.initial_rgb = read_initial_rgb()
         self.initial_lab = initial_to_lab(self.initial_rgb)
         self.processed = deepcopy(self.initial_rgb)
 
         self._set_up_ui()
+        self._set_up_shortcuts()
 
         self.unique = get_unique_colors_for_pyqt(self.initial_rgb, grid.radius)
         self._background = self._construct_palette_with_unique_colors_layer()
@@ -36,6 +38,31 @@ class ApplicationWindow(QMainWindow):
                            + self.initial_rgb.shape[1] * self._palette_size / self.initial_rgb.shape[0])
         # to exactly fit the picture
         self.setFixedHeight(self._palette_size)
+
+    def _set_up_shortcuts(self):
+        handlers = {
+            'Ctrl+O': self._open_image,
+            'Ctrl+S': self._save_image,
+            'Ctrl+L': self._load_grid,
+            'Ctrl+W': self._write_grid,
+        }
+        self._shortcuts = {}
+        for shortcut, handler in handlers.items():
+            s = QShortcut(QKeySequence(shortcut), self)
+            s.activated.connect(handler)
+            self._shortcuts[shortcut] = s
+
+    def _open_image(self):
+        print('O')
+
+    def _save_image(self):
+        print('S')
+
+    def _load_grid(self):
+        print('L')
+
+    def _write_grid(self):
+        print('W')
 
     def paintEvent(self, e):
         painter = QPainter(self)
