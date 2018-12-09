@@ -20,7 +20,7 @@ class GridDatabaseDriver:
     def get_grid(self, name) -> Grid:
         grid_as_dict = self._db\
             .grids\
-            .find_one({'name': name})\
-            .representation
-        return dict_to_grid(grid_as_dict)
+            .find_one({'name': name})
+        representation = grid_as_dict['representation']
+        return dict_to_grid(representation)
 
