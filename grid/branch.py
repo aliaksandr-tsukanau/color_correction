@@ -10,18 +10,16 @@ class Branch:
 
     @classmethod
     def from_angle(cls, angle, number_of_nodes, radius):
+        last_idx = number_of_nodes - 1
         nodes = [
             Node.from_polar(
-                r=radius * i / (number_of_nodes - 1),
+                r=radius * i / last_idx,
                 theta=angle,
-                offset=radius
+                offset=radius,
+                is_pinned=(i == 0 or i == last_idx)  # pin central and edge nodes
             )
             for i in range(0, number_of_nodes)
         ]
-
-        # pin central and edge nodes
-        for i in (0, -1):
-            nodes[i].is_pinned = True
 
         return cls(nodes)
 

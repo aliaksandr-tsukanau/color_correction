@@ -99,9 +99,12 @@ class DragAndDropCanvas(QWidget):
         if self.draggin_idx is not None:
             self._redraw_to_new_mouse_position(evt)
 
+    def update_image(self):
+        self._parent.processed = correct_image(self._parent.initial_lab, self._palette, self._grid)
+
     def mouseReleaseEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
             self._redraw_to_new_mouse_position(evt, recalculate_all=True)
             self.draggin_idx = None
-            self._parent.processed = correct_image(self._parent.initial_lab, self._palette, self._grid)
+            self.update_image()
 

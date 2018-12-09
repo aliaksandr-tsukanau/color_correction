@@ -4,8 +4,12 @@ from grid.grid import Grid
 
 
 def _dict_to_node(node_as_dict):
-    init_x, init_y, x, y, offset = (node_as_dict[k] for k in ('initial_x', 'initial_y', 'x', 'y', 'offset'))
-    node = Node(init_x, init_y, offset)
+    def get_attrs(*attrs):
+        for a in attrs:
+            yield node_as_dict[a]
+
+    init_x, init_y, x, y, offset, is_pinned = get_attrs('initial_x', 'initial_y', 'x', 'y', 'offset', 'is_pinned')
+    node = Node(init_x, init_y, offset, is_pinned)
     node.x = x
     node.y = y
     return node

@@ -8,6 +8,7 @@ from skimage import transform
 import numpy as np
 
 from color.palette import Palette
+from db.grid_driver import GridMongoClient
 from grid.grid import Grid
 from image.image import get_unique_colors_for_pyqt
 from desktop.canvas import DragAndDropCanvas
@@ -16,12 +17,17 @@ from image.image import read_initial_rgb, initial_to_lab
 
 
 class ApplicationWindow(QMainWindow):
-    def __init__(self, grid, palette, parent=None):
-        super().__init__(parent)
+    def __init__(self,
+                 grid: Grid,
+                 palette: Palette,
+                 db_client: GridMongoClient,):
+
+        super().__init__()
         self._palette = palette
         self._grid = grid
         self._palette_size = grid.radius * 2
-        self._parent = parent
+
+        self._db_client = db_client
 
         self.initial_rgb = read_initial_rgb()
         self.initial_lab = initial_to_lab(self.initial_rgb)
@@ -59,9 +65,15 @@ class ApplicationWindow(QMainWindow):
         print('S')
 
     def _load_grid(self):
+        grid = self._db_client.get_grid('a')
+        self._grid = grid
+        self.centralWidget()._grid = grid
+        self.centralWidget().update()
+        self.centralWidget().update_image()
         print('L')
 
     def _write_grid(self):
+        self._db_client.save_grid(self._grid, 'a')
         print('W')
 
     def paintEvent(self, e):
@@ -69,8 +81,8 @@ class ApplicationWindow(QMainWindow):
 
         painter.drawImage(QPoint(0, 0), self._background)
 
-        initial_image = to_qimage(self.processed)
-        scaled_img = initial_image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
+        image = to_qimage(self.processed)
+        scaled_img = image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
         painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
 
         # self._draw_invisible_nodes(painter)
@@ -96,8 +108,9 @@ def start():
 
     grid = Grid(branches_number=8, radius=250, invisible_branches=320, inv_nodes_per_branch=71)
     palette = Palette(grid)
+    db_client = GridMongoClient()
 
-    main_window = ApplicationWindow(grid, palette)
+    main_window = ApplicationWindow(grid, palette, db_client)
     main_window.setCentralWidget(DragAndDropCanvas(grid, palette, parent=main_window))
     main_window.show()
     sys.exit(application.exec_())

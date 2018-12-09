@@ -4,7 +4,7 @@ import numpy as np
 
 class Node:
     """For a node in GUI grid"""
-    def __init__(self, x, y, offset):
+    def __init__(self, x, y, offset, is_pinned=False):
         self.x = x
         self.initial_x = x
         self.y = y
@@ -12,17 +12,18 @@ class Node:
 
         self.offset = offset
 
-        self.is_pinned = False
+        self.is_pinned = is_pinned
 
     @classmethod
-    def from_polar(cls, r, theta, offset):
+    def from_polar(cls, r, theta, offset, is_pinned=False):
         """(r, theta) are polar coordinates of node being created,
         whereas grid_radius stays for length of branch"""
         theta_radians = radians(theta)
         return cls(
             x=r * cos(theta_radians),
             y=r * sin(theta_radians),
-            offset=offset
+            offset=offset,
+            is_pinned=is_pinned,
         )
 
     @property
