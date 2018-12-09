@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen, QKeySequence
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QShortcut
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QShortcut, QInputDialog
 from skimage import transform
 import numpy as np
 
@@ -65,16 +65,22 @@ class ApplicationWindow(QMainWindow):
         print('S')
 
     def _load_grid(self):
-        grid = self._db_client.get_grid('a')
-        self._grid = grid
-        self.centralWidget()._grid = grid
-        self.centralWidget().update()
-        self.centralWidget().update_image()
-        print('L')
+        name, ok = QInputDialog.getText(self, 'Ready to load', 'What filter do you want to load?')
+        if not ok:
+            return
+        try:
+            grid = self._db_client.get_grid(name)
+            self._grid = grid
+            self.centralWidget()._grid = grid
+            self.centralWidget().update()
+            self.centralWidget().update_image()
+        except TypeError:
+            print('Not found')
 
     def _write_grid(self):
-        self._db_client.save_grid(self._grid, 'a')
-        print('W')
+        name, ok = QInputDialog.getText(self, 'Ready to save', 'Choose a name for your filter:')
+        if ok:
+            self._db_client.save_grid(self._grid, name)\
 
     def paintEvent(self, e):
         painter = QPainter(self)
