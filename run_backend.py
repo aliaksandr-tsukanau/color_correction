@@ -27,5 +27,13 @@ def root():
     return resp
 
 
+@app.route('/get_all_filters')
+def all_filters():
+    grids = mongo.db.grids.find()
+    json_content = bson.json_util.dumps(grids)
+    filter_names = [grid['name'] for grid in json.loads(json_content)]
+    return jsonify(filter_names)
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port='5000')
