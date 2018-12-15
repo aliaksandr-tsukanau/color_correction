@@ -3,4 +3,3 @@ scikit-image==0.14.1
 pyqt5==5.11.3
 flask==1.0.2
 pymongo==3.7.2
-flask-pymongo==2.2.0

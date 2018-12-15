@@ -3,44 +3,31 @@
 #  You may not use this file except in compliance with GNU General Public License, version 3.
 #  See the GNU General Public License, version 3 for more details. https://www.gnu.org/licenses/gpl-3.0.en.html
 #
-import os
 
 import bson.json_util
 
-from flask import Flask, request, make_response, send_from_directory
-from flask.json import jsonify
+from flask import Flask, request, make_response
+from backend.filters import filter_requests
 
-from db.grid_driver import GridMongoClient
+from db.client_instance import DB_CLIENT
 
 app = Flask(__name__)
-db_client = GridMongoClient()
+BLUPRINTS = [
+    filter_requests,
+]
+
+for b in BLUPRINTS:
+    app.register_blueprint(b)
 
 
 @app.route('/get_grid_by_name')
 def root():
     name = request.args['name']
-    grid = db_client.get_grid_bson(name)
+    grid = DB_CLIENT.get_grid_bson(name)
     response_text = bson.json_util.dumps(grid)
     resp = make_response(response_text)
     resp.mimetype = 'application/json'
     return resp
-
-
-@app.route('/get_all_filters')
-def all_filters():
-    filter_names = db_client.get_all_filter_names()
-    return jsonify(filter_names)
-
-
-@app.route('/get_filter_img_by_name')
-def get_filter_img():
-    name = request.args['name'] + '.jpeg'
-    path = os.path.join(os.getcwd(), 'files')
-    path = os.path.join(path, 'filter_icons')
-    return send_from_directory(
-        path,
-        name
-    )
 
 
 if __name__ == '__main__':
