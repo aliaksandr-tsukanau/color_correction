@@ -13,5 +13,5 @@ all shadows and highlights remain the same.
 1. Create virtualenv for Python 3.6 (Might also work on 3.5 or 3.7, but not tested)
 2. Install MongoDB (tested on 3.6.3)
 3. To work with current db settings, create db `color_correction` with collection `grids`
-4. Inside the virtual environment run `pip install -r requiremtnts.txt`
+4. Inside the virtual environment run `pip install -r requirements.txt`
 5. Inside virtual env run `python run_desktop` for desktop app or `python run_backend` for backend.
