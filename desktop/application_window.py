@@ -75,7 +75,7 @@ class ApplicationWindow(QMainWindow):
         if not ok:
             return
         try:
-            grid = self._db_client.get_grid(name)
+            grid = self._db_client.get_grid_obj(name)
             self._grid = grid
             self.centralWidget()._grid = grid
             self.centralWidget().update()

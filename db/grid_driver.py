@@ -15,21 +15,28 @@ class GridMongoClient:
     def __init__(self):
         self._client = MongoClient()
         self._db = self._client.color_correction
+        self._grids = self._db.grids
 
     def save_grid(self, grid: Grid, name):
         grid_as_dict = grid_to_dict(grid)
-        self._db.grids.delete_many({
+        self._grids.delete_many({
             'name': name
         })
-        self._db.grids.insert({
+        self._grids.insert({
             'name': name,
             'representation': grid_as_dict
         })
 
-    def get_grid(self, name) -> Grid:
-        grid_as_dict = self._db\
-            .grids\
-            .find_one({'name': name})
+    def get_grid_obj(self, name) -> Grid:
+        grid_as_dict = self.get_grid_bson(name)
         representation = grid_as_dict['representation']
         return dict_to_grid(representation)
 
+    def get_grid_bson(self, name) -> dict:
+        return self._grids\
+                   .find_one({'name': name})
+
+    def get_all_filter_names(self) -> list:
+        all_grids = self._grids.find()
+        filter_names = [grid['name'] for grid in all_grids]
+        return filter_names
