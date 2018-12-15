@@ -8,12 +8,14 @@ import bson.json_util
 
 from flask import Flask, request, make_response
 from backend.filters import filter_requests
+from backend.processing import processing_requests
 
 from db.client_instance import DB_CLIENT
 
 app = Flask(__name__)
 BLUPRINTS = [
     filter_requests,
+    processing_requests,
 ]
 
 for b in BLUPRINTS:

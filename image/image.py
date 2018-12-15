@@ -50,6 +50,7 @@ def process_img_with_lut(initial_lab, palette, grid, for_pyqt=True):
     # apply chained map
     processed_image_lab = np.concatenate([c1[..., None], chained[c23]], axis=2)
     processed_image_rgb = color.lab2rgb(processed_image_lab)
-    processed_for_pyqt = np.require(processed_image_rgb * 255, np.uint8, 'C')
-    return processed_for_pyqt
+    if for_pyqt:
+        processed_image_rgb = np.require(processed_image_rgb * 255, np.uint8, 'C')
+    return processed_image_rgb
 
