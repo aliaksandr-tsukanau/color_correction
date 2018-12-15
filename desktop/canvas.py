@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QWidget
 
 # TODO: not allow nodes go out of canvas
 # TODO: fix center behaviour
-from image.image import correct_image
+from image.image import process_img_with_lut
 
 
 class DragAndDropCanvas(QWidget):
@@ -106,7 +106,7 @@ class DragAndDropCanvas(QWidget):
             self._redraw_to_new_mouse_position(evt)
 
     def update_image(self):
-        self._parent.processed = correct_image(self._parent.initial_lab, self._palette, self._grid)
+        self._parent.processed = process_img_with_lut(self._parent.initial_lab, self._palette, self._grid)
 
     def mouseReleaseEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:

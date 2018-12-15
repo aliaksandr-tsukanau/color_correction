@@ -3,10 +3,11 @@
 #  You may not use this file except in compliance with GNU General Public License, version 3.
 #  See the GNU General Public License, version 3 for more details. https://www.gnu.org/licenses/gpl-3.0.en.html
 #
+import os
 
 import bson.json_util
 
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, send_from_directory
 from flask.json import jsonify
 
 from db.grid_driver import GridMongoClient
@@ -29,6 +30,17 @@ def root():
 def all_filters():
     filter_names = db_client.get_all_filter_names()
     return jsonify(filter_names)
+
+
+@app.route('/get_filter_img_by_name')
+def get_filter_img():
+    name = request.args['name'] + '.jpeg'
+    path = os.path.join(os.getcwd(), 'files')
+    path = os.path.join(path, 'filter_icons')
+    return send_from_directory(
+        path,
+        name
+    )
 
 
 if __name__ == '__main__':
