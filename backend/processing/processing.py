@@ -12,6 +12,7 @@ from hashlib import sha256
 
 from flask import Blueprint, request, jsonify, send_from_directory
 
+from grid.grid import Grid
 from image.image import initial_to_lab, process_img_with_lut
 from db.client_instance import DB_CLIENT
 from color.palette import Palette
@@ -48,6 +49,14 @@ def _get_abs_path(rel_path):
     return abs_path
 
 
+def _get_palette():
+    default_grid = Grid(branches_number=8, radius=250, invisible_branches=320, inv_nodes_per_branch=71)
+    return Palette(default_grid)
+
+
+PALETTE = _get_palette()
+
+
 @processing_requests.route('/process_image', methods=['GET'])
 def process_image():
     img_token = request.args['image_token']
@@ -58,9 +67,8 @@ def process_image():
     initial_lab = initial_to_lab(initial_rgb)
 
     grid = DB_CLIENT.get_grid_obj(grid_name)
-    palette = Palette(grid)
 
-    processed = process_img_with_lut(initial_lab, palette, grid)
+    processed = process_img_with_lut(initial_lab, PALETTE, grid)
 
     directory = os.path.join(os.getcwd(), 'files')
     directory = os.path.join(directory, 'processed_images')
