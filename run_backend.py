@@ -15,12 +15,12 @@ from db.client_instance import DB_CLIENT
 
 app = Flask(__name__)
 
-BLUPRINTS = [
+BLUEPRINTS = [
     filter_requests,
     processing_requests,
 ]
 
-for b in BLUPRINTS:
+for b in BLUEPRINTS:
     app.register_blueprint(b)
 
 
