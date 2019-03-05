@@ -46,12 +46,23 @@ def handle_invalid_usage(error: InvalidImageFile):
     return response
 
 
+ALLOWED_EXTENSIONS = {'.jpeg', '.jpg'}
+
+
+def _is_jpg(file):
+    return any(
+        file.filename.lower().endswith(ext) for ext in ALLOWED_EXTENSIONS
+    )
+
+
 @processing_requests.route('/send_image', methods=['POST'])
 def send_image():
     img_files = request.files
     if len(img_files) != 1:
         raise InvalidImageFile('Expected one image file, got a different number')
     img_file = img_files['file']
+    if not _is_jpg(img_file):
+        raise InvalidImageFile('File is not JPEG')
     rel_path = _get_img_token(img_file.filename)
     abs_path = _get_abs_path(rel_path)
     img_file.save(abs_path)
