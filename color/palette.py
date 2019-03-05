@@ -6,7 +6,6 @@
 #
 
 from skimage import color
-import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 
@@ -69,6 +68,7 @@ class Palette:
 
 if __name__ == '__main__':
     # quick test using matplotlib
+    import matplotlib.pyplot as plt
     grid = Grid(branches_number=8, radius=250, invisible_branches=320, inv_nodes_per_branch=71)
     palette = Palette(grid)
     plt.imshow(palette.rgb)

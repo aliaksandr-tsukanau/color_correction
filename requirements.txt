@@ -4,3 +4,4 @@ pyqt5==5.11.3
 flask==1.0.2
 pymongo==3.7.2
 attrs==19.1.0
+gunicorn==19.9.0

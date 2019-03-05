@@ -8,10 +8,10 @@
 
 import datetime as dt
 import os
+from functools import lru_cache
+
 import skimage.io
 from hashlib import sha256
-
-from attr import attrs
 from flask import Blueprint, request, jsonify, send_from_directory
 
 from grid.grid import Grid
@@ -83,26 +83,38 @@ def _get_palette():
 PALETTE = _get_palette()
 
 
+@lru_cache(maxsize=20)
+def _cached_read_img_into_lab(path):
+    initial_rgb = skimage.io.imread(path)
+    return initial_to_lab(initial_rgb)
+
+
+@lru_cache(maxsize=50)
+def _cached_get_processed_img(image_token, grid_name):
+    path = _get_abs_path(image_token)
+    initial_lab = _cached_read_img_into_lab(path)
+
+    grid = DB_CLIENT.get_grid_obj(grid_name)
+
+    return process_img_with_lut(initial_lab, PALETTE, grid)
+
+
 @processing_requests.route('/process_image', methods=['GET'])
 def process_image():
     img_token = request.args['image_token']
     grid_name = request.args['grid_name']
 
-    path = _get_abs_path(img_token)
-    initial_rgb = skimage.io.imread(path)
-    initial_lab = initial_to_lab(initial_rgb)
-
-    grid = DB_CLIENT.get_grid_obj(grid_name)
-
-    processed = process_img_with_lut(initial_lab, PALETTE, grid)
+    processed = _cached_get_processed_img(img_token, grid_name)
 
     directory = os.path.join(os.getcwd(), 'files')
     directory = os.path.join(directory, 'processed_images')
 
-    output_path = os.path.join(directory, img_token + '.jpeg')
+    output_path = f'{img_token}{grid_name}.jpeg'
 
-    skimage.io.imsave(output_path, processed)
-    return send_from_directory(
+    skimage.io.imsave(os.path.join(directory, output_path), processed)
+    response = send_from_directory(
         directory,
-        img_token + '.jpeg'
+        output_path,
     )
+    return response
+

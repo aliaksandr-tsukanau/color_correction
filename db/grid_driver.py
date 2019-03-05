@@ -4,6 +4,7 @@
 #  See the GNU General Public License, version 3 for more details. https://www.gnu.org/licenses/gpl-3.0.en.html
 #
 #
+from functools import lru_cache
 
 from pymongo import MongoClient
 
@@ -28,6 +29,7 @@ class GridMongoClient:
             'representation': grid_as_dict
         })
 
+    @lru_cache(maxsize=50)
     def get_grid_obj(self, name) -> Grid:
         grid_as_dict = self.get_grid_bson(name)
         representation = grid_as_dict['representation']

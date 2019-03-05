@@ -14,6 +14,7 @@ from backend.processing import processing_requests
 from db.client_instance import DB_CLIENT
 
 app = Flask(__name__)
+
 BLUPRINTS = [
     filter_requests,
     processing_requests,
