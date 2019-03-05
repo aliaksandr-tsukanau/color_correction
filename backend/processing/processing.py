@@ -1,7 +1,8 @@
-#  Copyright (c) 2018 Aliaksandr Tsukanau.
+#  Copyright (c) 2019 Aliaksandr Tsukanau.
 #  Licensed under GNU General Public Licence, version 3.
 #  You may not use this file except in compliance with GNU General Public License, version 3.
 #  See the GNU General Public License, version 3 for more details. https://www.gnu.org/licenses/gpl-3.0.en.html
+#
 #
 
 
@@ -10,6 +11,7 @@ import os
 import skimage.io
 from hashlib import sha256
 
+from attr import attrs
 from flask import Blueprint, request, jsonify, send_from_directory
 
 from grid.grid import Grid
@@ -21,10 +23,34 @@ from color.palette import Palette
 processing_requests = Blueprint('processing_requests', __name__)
 
 
+class InvalidImageFile(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+
+
+@processing_requests.errorhandler(InvalidImageFile)
+def handle_invalid_usage(error: InvalidImageFile):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+
 @processing_requests.route('/send_image', methods=['POST'])
 def send_image():
     img_files = request.files
-    assert len(img_files) == 1
+    if len(img_files) != 1:
+        raise InvalidImageFile('Expected one image file, got a different number')
     img_file = img_files['file']
     rel_path = _get_img_token(img_file.filename)
     abs_path = _get_abs_path(rel_path)

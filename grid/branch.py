@@ -1,18 +1,22 @@
-#  Copyright (c) 2018 Aliaksandr Tsukanau.
+#  Copyright (c) 2019 Aliaksandr Tsukanau.
 #  Licensed under GNU General Public Licence, version 3.
 #  You may not use this file except in compliance with GNU General Public License, version 3.
 #  See the GNU General Public License, version 3 for more details. https://www.gnu.org/licenses/gpl-3.0.en.html
 #
+#
 
 from typing import List
+
+from attr import attrs
 
 from .node import Node
 
 
+@attrs(auto_attribs=True)
 class Branch:
     """A collection of nodes which are by default located on the same line from center to periphery"""
-    def __init__(self, nodes: List[Node]):
-        self.nodes = nodes
+
+    nodes: List[Node]
 
     @classmethod
     def from_angle(cls, angle, number_of_nodes, radius):
@@ -37,6 +41,3 @@ class Branch:
             for j in range(prev + 1, next_):
                 nodes[j].x = nodes[prev].x + (nodes[next_].x - nodes[prev].x) * (j - prev) / (next_ - prev)
                 nodes[j].y = nodes[prev].y + (nodes[next_].y - nodes[prev].y) * (j - prev) / (next_ - prev)
-
-    def __repr__(self):
-        return 'Branch(nodes_number=%d, radius=%r)' % (len(self.nodes), self.radius)
