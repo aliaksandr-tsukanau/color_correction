@@ -94,13 +94,13 @@ def _get_palette():
 PALETTE = _get_palette()
 
 
-@lru_cache(maxsize=20)
+@lru_cache(maxsize=50)
 def _cached_read_img_into_lab(path):
     initial_rgb = skimage.io.imread(path)
     return initial_to_lab(initial_rgb)
 
 
-@lru_cache(maxsize=50)
+@lru_cache(maxsize=150)
 def _cached_get_processed_img(image_token, grid_name):
     path = _get_abs_path(image_token)
     initial_lab = _cached_read_img_into_lab(path)
