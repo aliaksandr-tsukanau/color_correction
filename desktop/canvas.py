@@ -6,13 +6,16 @@
 #
 
 import numpy as np
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QWidget
 
 # TODO: not allow nodes go out of canvas
 # TODO: fix center behaviour
-from image.image import process_img_with_lut
+from skimage import transform
+
+from image.image import process_img_with_lut, get_unique_colors_for_pyqt, read_initial_rgb
+from image.to_qimage import to_qimage
 
 
 class DragAndDropCanvas(QWidget):
@@ -26,6 +29,8 @@ class DragAndDropCanvas(QWidget):
         self._delta = delta
         self._palette = palette
         self._grid = grid
+
+        self._palette_size = grid.radius * 2
         self._parent = parent
         
         self.draggin_idx = None
@@ -37,6 +42,12 @@ class DragAndDropCanvas(QWidget):
 
         self._update_nodes_array()
 
+        self.initial_rgb = read_initial_rgb()
+        self.unique = get_unique_colors_for_pyqt(self.initial_rgb, grid.radius)
+
+        self.setFixedHeight(self._grid.radius * 2)
+        self._background = self._construct_palette_with_unique_colors_layer()
+
     def _update_nodes_array(self):
         """writes numpy array of all grid's nodes to instance field self._nodes"""
         self._nodes = np.array([node.coords_for_canvas for branch in self._grid.branches for node in branch.nodes])
@@ -45,6 +56,13 @@ class DragAndDropCanvas(QWidget):
     def paintEvent(self, e):
         painter = QPainter()
         painter.begin(self)
+
+        image = to_qimage(self.parent().processed)
+        scaled_img = image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
+        painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
+
+        painter.drawImage(QPoint(0, 0), self._background)
+
         self._update_nodes_array()  # copy changes of branch update inside this class
         self.draw_points(painter)
         self.draw_edges(painter)
@@ -115,3 +133,10 @@ class DragAndDropCanvas(QWidget):
             self.draggin_idx = None
             self.update_image()
 
+    def _construct_palette_with_unique_colors_layer(self):
+        background = transform.resize(self._palette.rgb, (self._palette_size, self._palette_size))
+        background = 255 * background
+        for b, a in self.unique:
+            background[int(a), int(b)] = 255
+        background = np.require(background, np.uint8, 'C')
+        return to_qimage(background)

@@ -10,7 +10,7 @@ from skimage import io, color
 
 
 def read_initial_rgb():
-    return io.imread('/home/sasha/snap/telegram-desktop/common/photo_2018-04-10_11-45-36.jpg')
+    return io.imread('/home/sasha/Downloads/Telegram Desktop/photo_2019-05-16_17-47-12.jpg')
 
 
 def initial_to_lab(initial_rgb):

@@ -10,7 +10,7 @@ from copy import deepcopy
 
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen, QKeySequence
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QShortcut, QInputDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QShortcut, QInputDialog, QMenu
 from skimage import transform
 import numpy as np
 
@@ -45,13 +45,30 @@ class ApplicationWindow(QMainWindow):
         self._set_up_shortcuts()
 
         self.unique = get_unique_colors_for_pyqt(self.initial_rgb, grid.radius)
-        self._background = self._construct_palette_with_unique_colors_layer()
+        # self._background = self._construct_palette_with_unique_colors_layer()
 
     def _set_up_ui(self):
+
+        menubar = self.menuBar()
+
+        img_menu = menubar.addMenu('Image')
+        open_img = QAction('Open', self)
+        save_img = QAction('Save', self)
+        img_menu.addAction(open_img)
+        img_menu.addAction(save_img)
+
+        grid_menu = menubar.addMenu('Grid')
+        download_grid = QAction('Download', self)
+        download_grid.triggered.connect(self._load_grid)
+        upload_grid = QAction('Upload', self)
+        upload_grid.triggered.connect(self._write_grid)
+        grid_menu.addAction(download_grid)
+        grid_menu.addAction(upload_grid)
+
         self.setFixedWidth(self._palette_size
                            + self.initial_rgb.shape[1] * self._palette_size / self.initial_rgb.shape[0])
         # to exactly fit the picture
-        self.setFixedHeight(self._palette_size)
+        # self.setFixedHeight(self._palette_size)
 
     def _set_up_shortcuts(self):
         handlers = {
@@ -92,12 +109,12 @@ class ApplicationWindow(QMainWindow):
 
     def paintEvent(self, e):
         painter = QPainter(self)
+        #
+        # painter.drawImage(QPoint(0, 0), self._background)
 
-        painter.drawImage(QPoint(0, 0), self._background)
-
-        image = to_qimage(self.processed)
-        scaled_img = image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
-        painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
+        # image = to_qimage(self.processed)
+        # scaled_img = image.scaledToHeight(self._palette_size, Qt.SmoothTransformation)
+        # painter.drawImage(QPoint(self._palette_size, 0), scaled_img)
 
         # self._draw_invisible_nodes(painter)
 
@@ -125,6 +142,8 @@ def start():
     db_client = GridMongoClient()
 
     main_window = ApplicationWindow(grid, palette, db_client)
+    author_string = 'LUT Color Correction - made by Alexander Tsukanov'
+    main_window.setWindowTitle(author_string)
     main_window.setCentralWidget(DragAndDropCanvas(grid, palette, parent=main_window))
     main_window.show()
     sys.exit(application.exec_())
