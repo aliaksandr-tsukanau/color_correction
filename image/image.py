@@ -9,8 +9,8 @@ import numpy as np
 from skimage import io, color
 
 
-def read_initial_rgb():
-    return io.imread('/home/sasha/Downloads/Telegram Desktop/photo_2019-05-16_17-47-12.jpg')
+def read_initial_rgb(path='/home/sasha/Downloads/Telegram Desktop/photo_2019-05-16_17-47-12.jpg'):
+    return io.imread(path)
 
 
 def initial_to_lab(initial_rgb):
