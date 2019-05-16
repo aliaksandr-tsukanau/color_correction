@@ -17,7 +17,7 @@ import numpy as np
 from color.palette import Palette
 from db.grid_driver import GridMongoClient
 from grid.grid import Grid
-from image.image import get_unique_colors_for_pyqt
+from image.image import get_unique_colors_for_pyqt, save_processed_image
 from desktop.canvas import DragAndDropCanvas
 from image.image import read_initial_rgb, initial_to_lab
 
@@ -51,6 +51,7 @@ class ApplicationWindow(QMainWindow):
         open_img = QAction('Open', self)
         open_img.triggered.connect(self._open_image)
         save_img = QAction('Save', self)
+        save_img.triggered.connect(self._save_image)
         img_menu.addAction(open_img)
         img_menu.addAction(save_img)
 
@@ -88,6 +89,8 @@ class ApplicationWindow(QMainWindow):
             self,
             "Open Image", "", "All Files (*)", options=QFileDialog.Options()
         )
+        if not file_name:
+            return
         self.initial_rgb = read_initial_rgb(path=file_name)
         self.initial_lab = initial_to_lab(self.initial_rgb)
         self.processed = deepcopy(self.initial_rgb)
@@ -98,7 +101,13 @@ class ApplicationWindow(QMainWindow):
         self.centralWidget().update_image()
 
     def _save_image(self):
-        print('S')
+        options = QFileDialog.Options()
+        file_name, _ = QFileDialog.getSaveFileName(
+            self, "Save Image", "", "All Files (*)", options=options
+        )
+        if not file_name:
+            return
+        save_processed_image(self.processed, file_name)
 
     def _grid_reset(self):
         grid = Grid(branches_number=8, radius=250, invisible_branches=320, inv_nodes_per_branch=71)

@@ -55,3 +55,6 @@ def process_img_with_lut(initial_lab, palette, grid, for_pyqt=True):
         processed_image_rgb = np.require(processed_image_rgb * 255, np.uint8, 'C')
     return processed_image_rgb
 
+
+def save_processed_image(image, path):
+    io.imsave(path, image)
