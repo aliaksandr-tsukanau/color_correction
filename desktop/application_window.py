@@ -8,11 +8,9 @@
 import sys
 from copy import deepcopy
 
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPen, QKeySequence
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QShortcut, QInputDialog, QMenu, QFileDialog
-from skimage import transform
-import numpy as np
 
 from color.palette import Palette
 from db.grid_driver import GridMongoClient
