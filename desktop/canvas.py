@@ -66,7 +66,16 @@ class DragAndDropCanvas(QWidget):
         self._update_nodes_array()  # copy changes of branch update inside this class
         self.draw_points(painter)
         self.draw_edges(painter)
+        # self._draw_invisible_nodes(painter)
+
         painter.end()
+
+    def _draw_invisible_nodes(self, painter: QPainter):
+        # for debugging
+        painter.setPen(QPen(Qt.darkYellow, 2, Qt.SolidLine))
+        for branch in self._grid.invisible_nodes:
+            for ab in branch:
+                painter.drawPoint(*(ab + self._grid.radius))
 
     def draw_points(self, painter: QPainter):
         for i, (x, y) in enumerate(self._nodes):
