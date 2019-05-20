@@ -4,7 +4,7 @@
 #  See the GNU General Public License, version 3 for more details. https://www.gnu.org/licenses/gpl-3.0.en.html
 #
 #
-
+import logging
 import sys
 from copy import deepcopy
 
@@ -94,6 +94,8 @@ class ApplicationWindow(QMainWindow):
         self.processed = deepcopy(self.initial_rgb)
         self.centralWidget().unique = get_unique_colors_for_pyqt(self.initial_rgb, self._grid.radius)
         self.centralWidget()._background = self.centralWidget()._construct_palette_with_unique_colors_layer()
+        self.setFixedWidth(self._palette_size
+                           + self.initial_rgb.shape[1] * self._palette_size / self.initial_rgb.shape[0])
         self.update()
         self.centralWidget().update()
         self.centralWidget().update_image()

@@ -4,6 +4,8 @@
 #  See the GNU General Public License, version 3 for more details. https://www.gnu.org/licenses/gpl-3.0.en.html
 #
 #
+import logging
+import time
 
 import numpy as np
 from PyQt5.QtCore import Qt, QPoint
@@ -138,9 +140,12 @@ class DragAndDropCanvas(QWidget):
 
     def mouseReleaseEvent(self, evt):
         if evt.button() == Qt.LeftButton and self.draggin_idx is not None:
+            start_time = time.time()
             self._redraw_to_new_mouse_position(evt, recalculate_all=True)
             self.draggin_idx = None
             self.update_image()
+            finish_time = time.time()
+            print(finish_time - start_time)
 
     def _construct_palette_with_unique_colors_layer(self):
         background = transform.resize(self._palette.rgb, (self._palette_size, self._palette_size))
