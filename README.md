@@ -7,6 +7,12 @@ Desktop app allows to define color substitution mapping on CIE Lab color space u
 Simply speaking, you can color red items in the image into blue, so that they'll look natural - 
 all shadows and highlights remain the same.
 
+Here is hook it looks like:
+
+![](ui_areas.png)
+![](ui_grid_moved.png)
+![](ui_menu.png)
+
 # Installation
 
 1. Create virtualenv for Python 3.6 (Might also work on 3.5 or 3.7, but not tested)
